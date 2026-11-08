@@ -1,0 +1,207 @@
+# Alert delivery and device identity
+
+Source: shared_db, 2026-10-31T13:37:40+08:00. 20 objects; 33 enforced relationships; 119 displayed columns.
+
+Separates content, mobile device registration, browser subscriptions and delivery deduplication. Nullable token links support revocation.
+
+Presentation view: keys and selected business fields only. Context tables can have additional relationships outside this module; use the unified ERD for those.
+
+```mermaid
+erDiagram
+  direction LR
+  %% Physical FKs only; views and independent stores receive no invented links.
+  addresses["addresses (SHARED DEPENDENCY)"] {
+    int address_id PK
+    int barangay_id FK
+    int sitio_id FK
+    int purok_id FK
+    int zipcode_id FK
+    datetime created_at
+  }
+  deviceTokens["device_tokens (SHARED DEPENDENCY)"] {
+    int id PK
+    string household_id FK
+    string member_id FK
+    boolean is_active
+    datetime logged_at
+    datetime created_at
+    string user_id FK
+    int team_id FK
+    int selection_token_id FK
+    int responder_id FK
+  }
+  disasterBroadcasts["disaster_broadcasts (RESQ MAPPING)"] {
+    int broadcast_id PK
+    string disaster_id FK
+    int severity_id FK
+    text message
+    string channel
+    string status
+    int notification_id FK
+    int weather_log_id FK
+    datetime sent_at
+  }
+  disasterEvents["disaster_events (SHARED DEPENDENCY)"] {
+    string event_id PK
+    string name
+    int type_id FK
+    int severity_level_id FK
+    datetime created_at
+  }
+  evacuationCenters["evacuation_centers (SHARED DEPENDENCY)"] {
+    string evacuation_center_id PK
+    string current_event_id FK
+    string name
+    string status
+    datetime created_at
+    text notes
+  }
+  householdMembers["household_members (SHARED DEPENDENCY)"] {
+    string member_id PK
+    string household_id FK
+    string first_name
+    string last_name
+    int gender_id FK
+    int relationship_id FK
+    int civil_status_id FK
+    int occupation FK
+    int education_level_id FK
+    datetime created_at
+    string name
+  }
+  householdMobileNotifications["household_mobile_notifications (RESQ MAPPING)"] {
+    int notification_id PK
+    string household_id FK
+    string title
+    text message
+    datetime created_at
+  }
+  households["households (SHARED DEPENDENCY)"] {
+    string household_id PK
+    string household_code UK
+    string household_name
+    string created_by FK
+    int address_id FK
+    datetime created_at
+    string login_user_id FK
+  }
+  notifications["notifications (SHARED DEPENDENCY)"] {
+    int notif_id PK
+    text message
+    string sent_by FK
+    string evacuation_event_id FK
+    string evacuation_center_id FK
+    int recurrence_type_id FK
+    datetime created_at
+    string channel
+    string status
+    string source_key UK
+    string advisory_fingerprint UK
+  }
+  personalAccessTokens["personal_access_tokens (SHARED DEPENDENCY)"] {
+    int id PK
+    text name
+    string token UK
+    datetime created_at
+  }
+  recurrenceTypes["recurrence_types (SHARED DEPENDENCY)"] {
+    int type_id PK
+    string type_key UK
+  }
+  rescueTeams["rescue_teams (RESQ MAPPING)"] {
+    int team_id PK
+    string team_code UK
+    string team_name
+    int assigned_purok_id FK
+    int leader_responder_id FK
+    datetime created_at
+  }
+  responders["responders (RESQ MAPPING)"] {
+    int responder_id PK
+    string user_id FK
+    string responder_code UK
+    int team_id FK
+    string title
+    datetime created_at
+  }
+  roles["roles (SHARED DEPENDENCY)"] {
+    int role_id PK
+    string role_key UK
+    string name
+  }
+  severityLevels["severity_levels (SHARED DEPENDENCY)"] {
+    int severity_id PK
+    string severity_key UK
+  }
+  userNotifications["user_notifications (RESQ MAPPING)"] {
+    int id PK
+    string user_id FK
+    string title
+    text message
+    datetime created_at
+  }
+  users["users (SHARED DEPENDENCY)"] {
+    string user_id PK
+    string first_name
+    string last_name
+    string name
+    int role_id FK
+    string assigned_center_id FK
+    string household_id FK
+    string member_id FK,UK
+    boolean is_active
+  }
+  weatherLogs["weather_logs (RESQ MAPPING)"] {
+    int weather_log_id PK
+    string disaster_id FK
+    datetime observed_at
+    datetime created_at
+  }
+  webPushDeliveries["web_push_deliveries (RESQ MAPPING)"] {
+    int id PK
+    int subscription_id FK
+    datetime created_at
+  }
+  webPushSubscriptions["web_push_subscriptions (RESQ MAPPING)"] {
+    int id PK
+    string user_id FK
+    int token_id FK
+    string endpoint_hash UK
+    datetime created_at
+  }
+  households |o..o{ deviceTokens : "REDACTED"
+  householdMembers |o..o{ deviceTokens : "REDACTED"
+  responders |o..o{ deviceTokens : "REDACTED"
+  rescueTeams |o..o{ deviceTokens : "REDACTED"
+  users |o..o{ deviceTokens : "REDACTED"
+  personalAccessTokens |o..o{ deviceTokens : "REDACTED"
+  disasterEvents |o..o{ disasterBroadcasts : "disaster_id"
+  notifications |o..o{ disasterBroadcasts : "notification_id"
+  severityLevels |o..o{ disasterBroadcasts : "severity_id"
+  weatherLogs |o..o{ disasterBroadcasts : "weather_log_id"
+  severityLevels |o..o{ disasterEvents : "severity_level_id"
+  disasterEvents |o..o{ evacuationCenters : "current_event_id"
+  households |o..o{ householdMembers : "household_id"
+  households ||..o{ householdMobileNotifications : "household_id"
+  addresses |o..o{ households : "address_id"
+  users |o..o{ households : "created_by"
+  users |o..o{ households : "login_user_id"
+  evacuationCenters |o..o{ notifications : "evacuation_center_id"
+  disasterEvents |o..o{ notifications : "evacuation_event_id"
+  recurrenceTypes |o..o{ notifications : "recurrence_type_id"
+  users |o..o{ notifications : "sent_by"
+  responders |o..o{ rescueTeams : "leader_responder_id"
+  rescueTeams |o..o{ responders : "team_id"
+  users |o..o{ responders : "user_id"
+  users ||..o{ userNotifications : "user_id"
+  evacuationCenters |o..o{ users : "assigned_center_id"
+  households |o..o{ users : "household_id"
+  householdMembers |o..o| users : "member_id"
+  roles |o..o{ users : "role_id"
+  disasterEvents |o..o{ weatherLogs : "disaster_id"
+  webPushSubscriptions ||..o{ webPushDeliveries : "subscription_id"
+  users ||..o{ webPushSubscriptions : "user_id"
+  personalAccessTokens |o..o{ webPushSubscriptions : "token_id"
+```
+
+[Raw Mermaid](06_alert_delivery_devices.mmd) | [Diagram index](../00_README.md)

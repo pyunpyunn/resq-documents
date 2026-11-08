@@ -1,0 +1,38 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actormapProvider["Actor: Map / routing provider"]
+  actoroneSignal["Actor: OneSignal mobile push"]
+  actorsmsGateway["Actor: Configured SMS gateway"]
+  actortm["Actor: Rescuer team member"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC01(["UC-01: Sign in, resume access and sign out"])
+    caseUC02(["UC-02: Maintain own profile and password"])
+    caseUC03(["UC-03: Recover account access"])
+    caseUC09(["UC-09: Receive and review disaster alerts"])
+    caseUC13B(["UC-13B: Verify evacuation arrival"])
+    caseUC15(["UC-15: View own assigned incidents and households"])
+    caseUC16(["UC-16: Navigate and update assigned mission progress"])
+    caseUC17(["UC-17: Use saved navigation and synchronize trip events"])
+    caseUC18(["UC-18: Record check-in and member assessment"])
+    caseUC19(["UC-19: Submit field findings and damage assessment"])
+    caseUC20A(["UC-20A: Communicate using internet PTT and clips"])
+    caseUC21B(["UC-21B: Track or cancel an eligible own request"])
+    caseUC37(["UC-37: Register a permitted mobile push subscription"])
+  end
+  actortm --- caseUC01
+  actortm --- caseUC02
+  actortm --- caseUC03
+  actorsmsGateway --- caseUC03
+  actortm --- caseUC09
+  actoroneSignal --- caseUC09
+  actortm --- caseUC13B
+  actortm --- caseUC15
+  actortm --- caseUC16
+  actormapProvider --- caseUC16
+  actortm --- caseUC17
+  actortm --- caseUC18
+  actortm --- caseUC19
+  actortm --- caseUC20A
+  actortm --- caseUC21B
+  actortm --- caseUC37
+  actoroneSignal --- caseUC37

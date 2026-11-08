@@ -1,0 +1,40 @@
+flowchart LR
+  subgraph lane0["Authorized publisher"]
+    direction TB
+    start(["Choose active event, scope and status instructions"])
+  end
+  subgraph lane1["API"]
+    direction TB
+    authorize{"Publisher, event and input valid?"}
+    ready{"Eligible target subscriptions available?"}
+    accepted{"Provider returned a real message ID?"}
+  end
+  subgraph lane2["Web client"]
+    direction TB
+    reject(["Show access or validation error"])
+  end
+  subgraph lane3["Operational data"]
+    direction TB
+    save[("Save broadcast and delivery plan")]
+    empty(["Record no recipients; provider ID remains null"])
+    failed(["Record delivery failure and retry state"])
+    id[("Persist actual provider ID and acceptance count")]
+  end
+  subgraph lane4["OneSignal"]
+    direction TB
+    submit["Submit targeted message with retry identity"]
+  end
+  subgraph lane5["Target device"]
+    direction TB
+    phone(["Display notification when service/device permits"])
+  end
+  start --> authorize
+  authorize -->|"No"| reject
+  authorize -->|"Yes"| save
+  save --> ready
+  ready -->|"No"| empty
+  ready -->|"Yes"| submit
+  submit --> accepted
+  accepted -->|"No"| failed
+  accepted -->|"Yes"| id
+  id --> phone

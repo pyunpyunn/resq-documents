@@ -1,0 +1,47 @@
+{
+  "colors": {
+    "ink": "#0F1E3D",
+    "navy": "#12306B",
+    "blue": "#2563EB",
+    "cyan": "#0E7490",
+    "slate": "#475569",
+    "navy-tint": "#E6ECF8",
+    "blue-tint": "#DBE8FE",
+    "cyan-tint": "#D5F0F6",
+    "slate-tint": "#E8EDF3",
+    "mist": "#F5F8FD",
+    "white": "#FFFFFF",
+    "border": "#CBD5E1",
+    "border-strong": "#94A3B8",
+    "muted": "#64748B",
+    "yes": "#166534",
+    "no": "#B91C1C"
+  },
+  "font": "Inter",
+  "font_sizes": {
+    "title": 34,
+    "node": 18,
+    "table_header": 18,
+    "field": 16,
+    "data_type": 14,
+    "connector": 14,
+    "container": 14,
+    "badge": 12
+  },
+  "outer_margin": 60,
+  "base_grid": 8,
+  "connector_width": 1.75,
+  "use_case_association_width": 2.25,
+  "use_case_association_opacity": 1,
+  "decision_branch_width": 2.25,
+  "decision_branch_colors": {
+    "Yes": "#166534",
+    "No": "#B91C1C"
+  },
+  "radii": {
+    "container": 16,
+    "table": 12,
+    "process": 10,
+    "label_chip": 6
+  }
+}

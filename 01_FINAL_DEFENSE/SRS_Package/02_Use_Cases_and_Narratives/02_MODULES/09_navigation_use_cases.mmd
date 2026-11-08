@@ -1,0 +1,14 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actormapProvider["Actor: Map / routing provider"]
+  actortl["Actor: Rescuer team leader"]
+  actortm["Actor: Rescuer team member"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC16(["UC-16: Navigate and update assigned mission progress"])
+    caseUC17(["UC-17: Use saved navigation and synchronize trip events"])
+  end
+  actortl --- caseUC16
+  actortm --- caseUC16
+  actormapProvider --- caseUC16
+  actortl --- caseUC17
+  actortm --- caseUC17

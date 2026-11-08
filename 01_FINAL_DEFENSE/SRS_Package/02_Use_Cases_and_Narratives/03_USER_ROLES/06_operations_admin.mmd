@@ -1,0 +1,85 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actorbrowserPush["Actor: Browser Push service"]
+  actorevaTrack["Actor: EvaTrack report service"]
+  actoroneSignal["Actor: OneSignal mobile push"]
+  actoroperationsadmin["Actor: Operations / Admin"]
+  actorsafeTrack["Actor: SafeTrack report service"]
+  actorsmsGateway["Actor: Configured SMS gateway"]
+  actortrackingAid["Actor: TrackingAid"]
+  actorweatherProvider["Actor: Weather / advisory provider"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC01(["UC-01: Sign in, resume access and sign out"])
+    caseUC02(["UC-02: Maintain own profile and password"])
+    caseUC03(["UC-03: Recover account access"])
+    caseUC04(["UC-04: Manage rescuer accounts and teams"])
+    caseUC05(["UC-05: Manage HQ accounts and roles"])
+    caseUC06(["UC-06: Maintain barangay operational profile"])
+    caseUC07B(["UC-07B: Review and archive inquiries"])
+    caseUC13B(["UC-13B: Verify evacuation arrival"])
+    caseUC20B(["UC-20B: Monitor rescue communications"])
+    caseUC22A(["UC-22A: Monitor dashboard and operational summaries"])
+    caseUC22B(["UC-22B: Review maps, directory and weather"])
+    caseUC23A(["UC-23A: Declare a disaster and publish alert instructions"])
+    caseUC23B(["UC-23B: Review, update and close an active event"])
+    caseUC24(["UC-24: Review severity and hazard overlays"])
+    caseUC25A(["UC-25A: Review household safety reports"])
+    caseUC25B(["UC-25B: Confirm a household status report"])
+    caseUC26A(["UC-26A: Inspect rescue priorities and historical criteria"])
+    caseUC26B(["UC-26B: Dispatch a rescue team"])
+    caseUC26C(["UC-26C: Complete a dispatch through HQ approval"])
+    caseUC27(["UC-27: Monitor field reports and team progress"])
+    caseUC28(["UC-28: Prepare, save and export a situation report"])
+    caseUC29(["UC-29: Export findings for manual escalation"])
+    caseUC30(["UC-30: Browse, export and manage scoped archive evidence"])
+    caseUC32A(["UC-32A: Review and record resource requests"])
+    caseUC32B(["UC-32B: Validate, return or complete a resource request"])
+    caseUC33(["UC-33: Forward a validated request and monitor fulfillment"])
+    caseUC34B(["UC-34B: Decide report release and generate a signed file"])
+    caseUC35(["UC-35: Request and review a partner report"])
+    caseUC36(["UC-36: Export selected situation findings"])
+    caseUC39(["UC-39: Review notifications and enable browser push"])
+  end
+  actoroperationsadmin --- caseUC01
+  actoroperationsadmin --- caseUC02
+  actoroperationsadmin --- caseUC03
+  actorsmsGateway --- caseUC03
+  actoroperationsadmin --- caseUC04
+  actoroperationsadmin --- caseUC05
+  actoroperationsadmin --- caseUC06
+  actoroperationsadmin --- caseUC07B
+  actoroperationsadmin --- caseUC13B
+  actoroperationsadmin --- caseUC20B
+  actoroperationsadmin --- caseUC22A
+  actoroperationsadmin --- caseUC22B
+  actorweatherProvider --- caseUC22B
+  actoroperationsadmin --- caseUC23A
+  actoroneSignal --- caseUC23A
+  actorsmsGateway --- caseUC23A
+  actoroperationsadmin --- caseUC23B
+  actoroperationsadmin --- caseUC24
+  actorweatherProvider --- caseUC24
+  actoroperationsadmin --- caseUC25A
+  actoroperationsadmin --- caseUC25B
+  actoroperationsadmin --- caseUC26A
+  actoroperationsadmin --- caseUC26B
+  actoroperationsadmin --- caseUC26C
+  actoroperationsadmin --- caseUC27
+  actoroperationsadmin --- caseUC28
+  actoroperationsadmin --- caseUC29
+  actoroperationsadmin --- caseUC30
+  actoroperationsadmin --- caseUC32A
+  actoroperationsadmin --- caseUC32B
+  actoroperationsadmin --- caseUC33
+  actortrackingAid --- caseUC33
+  actoroperationsadmin --- caseUC34B
+  actorsafeTrack --- caseUC34B
+  actorevaTrack --- caseUC34B
+  actortrackingAid --- caseUC34B
+  actoroperationsadmin --- caseUC35
+  actorsafeTrack --- caseUC35
+  actorevaTrack --- caseUC35
+  actortrackingAid --- caseUC35
+  actoroperationsadmin --- caseUC36
+  actoroperationsadmin --- caseUC39
+  actorbrowserPush --- caseUC39

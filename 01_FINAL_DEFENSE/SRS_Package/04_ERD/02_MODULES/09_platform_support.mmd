@@ -1,0 +1,123 @@
+erDiagram
+  direction LR
+  %% Physical FKs only; views and independent stores receive no invented links.
+  auditLogs["audit_logs (SHARED DEPENDENCY)"] {
+    int audit_log_id PK
+    string user_id FK
+    string role_key
+    datetime created_at
+  }
+  cache["cache (SHARED FRAMEWORK)"] {
+    string key PK
+  }
+  cacheLocks["cache_locks (SHARED FRAMEWORK)"] {
+    string key PK
+  }
+  deviceTokens["device_tokens (SHARED DEPENDENCY)"] {
+    int id PK
+    string household_id FK
+    string member_id FK
+    boolean is_active
+    datetime logged_at
+    datetime created_at
+    string user_id FK
+    int team_id FK
+    int selection_token_id FK
+    int responder_id FK
+  }
+  deviceTrackingLogs["device_tracking_logs (RESQ MAPPING)"] {
+    int tracking_id PK
+    int device_token_id FK
+    string household_id FK
+    string member_id FK
+    datetime logged_at
+  }
+  failedJobs["failed_jobs (SHARED FRAMEWORK)"] {
+    int id PK
+    string uuid UK
+  }
+  householdMembers["household_members (SHARED DEPENDENCY)"] {
+    string member_id PK
+    string household_id FK
+    string first_name
+    string last_name
+    int gender_id FK
+    int relationship_id FK
+    int civil_status_id FK
+    int occupation FK
+    int education_level_id FK
+    datetime created_at
+    string name
+  }
+  households["households (SHARED DEPENDENCY)"] {
+    string household_id PK
+    string household_code UK
+    string household_name
+    string created_by FK
+    int address_id FK
+    datetime created_at
+    string login_user_id FK
+  }
+  jobBatches["job_batches (SHARED FRAMEWORK)"] {
+    string id PK
+    string name
+    int created_at
+  }
+  jobs["jobs (SHARED FRAMEWORK)"] {
+    int id PK
+    int created_at
+  }
+  migrations["migrations (SHARED FRAMEWORK)"] {
+    int id PK
+  }
+  operationalSequences["operational_sequences (RESQ MAPPING)"] {
+    string sequence_key PK
+  }
+  passwordResetTokens["password_reset_tokens (SHARED FRAMEWORK)"] {
+    string email PK
+    datetime created_at
+  }
+  realtimeOutbox["realtime_outbox (RESQ MAPPING)"] {
+    int id PK
+    datetime created_at
+  }
+  reportIdempotency["report_idempotency (RESQ MAPPING)"] {
+    string scope PK
+    datetime created_at
+  }
+  resqOrphanReferences["resq_orphan_references (RESQ MAPPING)"] {
+    int id PK
+  }
+  sessions["sessions (SHARED FRAMEWORK)"] {
+    string id PK
+  }
+  syncEvents["sync_events (RESQ MAPPING)"] {
+    int id PK
+    string client_event_id UK
+    int device_id FK
+    string status
+  }
+  users["users (SHARED DEPENDENCY)"] {
+    string user_id PK
+    string first_name
+    string last_name
+    string name
+    int role_id FK
+    string assigned_center_id FK
+    string household_id FK
+    string member_id FK,UK
+    boolean is_active
+  }
+  users |o..o{ auditLogs : "user_id"
+  households |o..o{ deviceTokens : "REDACTED"
+  householdMembers |o..o{ deviceTokens : "REDACTED"
+  users |o..o{ deviceTokens : "REDACTED"
+  households |o..o{ deviceTrackingLogs : "household_id"
+  householdMembers |o..o{ deviceTrackingLogs : "member_id"
+  deviceTokens |o..o{ deviceTrackingLogs : "device_token_id"
+  households |o..o{ householdMembers : "household_id"
+  users |o..o{ households : "created_by"
+  users |o..o{ households : "login_user_id"
+  deviceTokens ||..o{ syncEvents : "device_id"
+  households |o..o{ users : "household_id"
+  householdMembers |o..o| users : "member_id"

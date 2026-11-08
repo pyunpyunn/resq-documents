@@ -1,0 +1,31 @@
+flowchart LR
+  subgraph lane0["Household resident"]
+    direction TB
+    entry(["Sign in on this phone"])
+    select[/"Choose permitted household member"/]
+    pin[/"Supply permitted setup and location details"/]
+  end
+  subgraph lane1["API"]
+    direction TB
+    owner{"Owner selection required?"}
+    check["Verify membership and owner token"]
+    valid{"Linked records and location valid?"}
+  end
+  subgraph lane2["Client"]
+    direction TB
+    error(["Correct input or show unavailable boundary"])
+    done(["Display saved household overview"])
+  end
+  subgraph lane3["Operational data"]
+    direction TB
+    save[("Save household setup and device identity")]
+  end
+  entry --> owner
+  owner -->|"Yes"| select
+  select --> check
+  check --> pin
+  owner -->|"No"| pin
+  pin --> valid
+  valid -->|"No"| error
+  valid -->|"Yes"| save
+  save --> done

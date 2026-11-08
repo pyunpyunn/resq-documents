@@ -1,0 +1,43 @@
+flowchart LR
+  subgraph lane0["Rescuer"]
+    direction TB
+    start(["Sign in and bind permitted device"])
+    task{"Choose operational task"}
+  end
+  subgraph lane1["API"]
+    direction TB
+    scope["Return own assignments and capabilities"]
+    leader{"Team-leader request permission?"}
+    guard["Validate current assignment, event and request scope"]
+  end
+  subgraph lane2["Mobile client"]
+    direction TB
+    nav["Navigate or replay supported saved trip events"]
+    field["Record check-in or structured field assessment"]
+    radio["Use connected PTT and upload a clip"]
+    request["Submit logistics request"]
+    deny(["Show denied or unavailable action"])
+  end
+  subgraph lane3["Operational data / file storage"]
+    direction TB
+    persist[("Persist permitted evidence and metadata")]
+  end
+  subgraph lane4["Mobile client / HQ"]
+    direction TB
+    result(["Refresh actual assignment or request state"])
+  end
+  start --> scope
+  scope --> task
+  task -->|"Navigation"| nav
+  task -->|"Assessment"| field
+  task -->|"Radio"| radio
+  task -->|"New logistics request"| leader
+  leader -->|"No"| deny
+  leader -->|"Yes"| request
+  nav -->|"When synchronized"| guard
+  field --> guard
+  radio --> guard
+  request --> guard
+  guard -->|"When valid"| persist
+  guard -->|"When rejected"| deny
+  persist --> result

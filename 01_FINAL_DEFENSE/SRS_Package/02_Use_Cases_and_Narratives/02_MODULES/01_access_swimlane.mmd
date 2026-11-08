@@ -1,0 +1,29 @@
+flowchart LR
+  subgraph lane0["Account holder"]
+    direction TB
+    start(["Open web or installed mobile app"])
+    credentials[/"Enter credentials"/]
+    reject(["Show sign-in error or recovery option"])
+  end
+  subgraph lane1["API"]
+    direction TB
+    verify{"Validate account and authentication"}
+    owner{"Household phone owner still required?"}
+    authorize["Enforce role, ownership and device scope"]
+  end
+  subgraph lane2["Household resident"]
+    direction TB
+    choose["Select an eligible household member"]
+  end
+  subgraph lane3["Client"]
+    direction TB
+    workspace(["Open the permitted workspace"])
+  end
+  start --> credentials
+  credentials --> verify
+  verify -->|"Invalid"| reject
+  verify -->|"Valid"| owner
+  owner -->|"Yes"| choose
+  choose --> authorize
+  owner -->|"No"| authorize
+  authorize --> workspace

@@ -1,0 +1,1 @@
+-- Sanitized upload copy. The original proposal contains temporary account login/contact data and remains in the source documents folder.

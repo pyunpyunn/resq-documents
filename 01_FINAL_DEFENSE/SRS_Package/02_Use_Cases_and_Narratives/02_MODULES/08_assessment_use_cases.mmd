@@ -1,0 +1,31 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actorchair["Actor: Chairperson"]
+  actormitigationprevention["Actor: Mitigation / Prevention"]
+  actoroperationsadmin["Actor: Operations / Admin"]
+  actorpreparedness["Actor: Preparedness"]
+  actorrecoveryrehabilitation["Actor: Recovery / Rehabilitation"]
+  actorresponse["Actor: Response personnel"]
+  actortl["Actor: Rescuer team leader"]
+  actortm["Actor: Rescuer team member"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC13B(["UC-13B: Verify evacuation arrival"])
+    caseUC18(["UC-18: Record check-in and member assessment"])
+    caseUC19(["UC-19: Submit field findings and damage assessment"])
+    caseUC27(["UC-27: Monitor field reports and team progress"])
+  end
+  actorchair --- caseUC13B
+  actoroperationsadmin --- caseUC13B
+  actormitigationprevention --- caseUC13B
+  actorpreparedness --- caseUC13B
+  actorresponse --- caseUC13B
+  actorrecoveryrehabilitation --- caseUC13B
+  actortl --- caseUC13B
+  actortm --- caseUC13B
+  actortl --- caseUC18
+  actortm --- caseUC18
+  actortl --- caseUC19
+  actortm --- caseUC19
+  actorchair --- caseUC27
+  actoroperationsadmin --- caseUC27
+  actorresponse --- caseUC27

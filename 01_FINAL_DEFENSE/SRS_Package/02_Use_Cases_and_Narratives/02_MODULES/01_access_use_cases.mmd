@@ -1,0 +1,60 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actorbrowserPush["Actor: Browser Push service"]
+  actorchair["Actor: Chairperson"]
+  actorhouseholdresident["Actor: Household resident"]
+  actormitigationprevention["Actor: Mitigation / Prevention"]
+  actoroneSignal["Actor: OneSignal mobile push"]
+  actoroperationsadmin["Actor: Operations / Admin"]
+  actorpreparedness["Actor: Preparedness"]
+  actorrecoveryrehabilitation["Actor: Recovery / Rehabilitation"]
+  actorresponse["Actor: Response personnel"]
+  actorsmsGateway["Actor: Configured SMS gateway"]
+  actortl["Actor: Rescuer team leader"]
+  actortm["Actor: Rescuer team member"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC01(["UC-01: Sign in, resume access and sign out"])
+    caseUC02(["UC-02: Maintain own profile and password"])
+    caseUC03(["UC-03: Recover account access"])
+    caseUC37(["UC-37: Register a permitted mobile push subscription"])
+    caseUC39(["UC-39: Review notifications and enable browser push"])
+  end
+  actorchair --- caseUC01
+  actoroperationsadmin --- caseUC01
+  actormitigationprevention --- caseUC01
+  actorpreparedness --- caseUC01
+  actorresponse --- caseUC01
+  actorrecoveryrehabilitation --- caseUC01
+  actorhouseholdresident --- caseUC01
+  actortl --- caseUC01
+  actortm --- caseUC01
+  actorchair --- caseUC02
+  actoroperationsadmin --- caseUC02
+  actormitigationprevention --- caseUC02
+  actorpreparedness --- caseUC02
+  actorresponse --- caseUC02
+  actorrecoveryrehabilitation --- caseUC02
+  actorhouseholdresident --- caseUC02
+  actortl --- caseUC02
+  actortm --- caseUC02
+  actorchair --- caseUC03
+  actoroperationsadmin --- caseUC03
+  actormitigationprevention --- caseUC03
+  actorpreparedness --- caseUC03
+  actorresponse --- caseUC03
+  actorrecoveryrehabilitation --- caseUC03
+  actorhouseholdresident --- caseUC03
+  actortl --- caseUC03
+  actortm --- caseUC03
+  actorsmsGateway --- caseUC03
+  actorhouseholdresident --- caseUC37
+  actortl --- caseUC37
+  actortm --- caseUC37
+  actoroneSignal --- caseUC37
+  actorchair --- caseUC39
+  actoroperationsadmin --- caseUC39
+  actormitigationprevention --- caseUC39
+  actorpreparedness --- caseUC39
+  actorresponse --- caseUC39
+  actorrecoveryrehabilitation --- caseUC39
+  actorbrowserPush --- caseUC39

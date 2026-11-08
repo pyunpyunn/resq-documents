@@ -1,0 +1,13 @@
+{
+  "excluded_use_cases": {
+    "UC13B": "Evacuation-arrival verification belongs to EvaTrack.",
+    "UC38": "No SMS disaster-alert or user-facing SMS safety-submission feature is depicted."
+  },
+  "disaster_alert_provider": "OneSignal",
+  "sms_scope": "Configured account recovery only; never disaster-alert delivery.",
+  "permission_ui": "resqperation-system/frontend-mobile/components/NotificationPermissionNotice.tsx",
+  "location_consent_ui": "resqperation-system/frontend-mobile/utils/mobilePermissions.ts",
+  "first_login_setup": "resqperation-system/frontend-mobile/hooks/useHouseholdSetup.ts",
+  "rescuer_mission_ui": "resqperation-system/frontend-mobile/components/rescuer/RescuerDashboardScreen.tsx",
+  "role_policy": "resqperation-system/backend-laravel/app/Services/Web/WebAccessPolicy.php"
+}

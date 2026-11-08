@@ -1,0 +1,65 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actorbrowserPush["Actor: Browser Push service"]
+  actorevaTrack["Actor: EvaTrack report service"]
+  actorresponse["Actor: Response personnel"]
+  actorsafeTrack["Actor: SafeTrack report service"]
+  actorsmsGateway["Actor: Configured SMS gateway"]
+  actortrackingAid["Actor: TrackingAid"]
+  actorweatherProvider["Actor: Weather / advisory provider"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC01(["UC-01: Sign in, resume access and sign out"])
+    caseUC02(["UC-02: Maintain own profile and password"])
+    caseUC03(["UC-03: Recover account access"])
+    caseUC13B(["UC-13B: Verify evacuation arrival"])
+    caseUC20B(["UC-20B: Monitor rescue communications"])
+    caseUC22A(["UC-22A: Monitor dashboard and operational summaries"])
+    caseUC22B(["UC-22B: Review maps, directory and weather"])
+    caseUC23B(["UC-23B: Review, update and close an active event"])
+    caseUC24(["UC-24: Review severity and hazard overlays"])
+    caseUC25A(["UC-25A: Review household safety reports"])
+    caseUC25B(["UC-25B: Confirm a household status report"])
+    caseUC26A(["UC-26A: Inspect rescue priorities and historical criteria"])
+    caseUC26B(["UC-26B: Dispatch a rescue team"])
+    caseUC27(["UC-27: Monitor field reports and team progress"])
+    caseUC28(["UC-28: Prepare, save and export a situation report"])
+    caseUC29(["UC-29: Export findings for manual escalation"])
+    caseUC30(["UC-30: Browse, export and manage scoped archive evidence"])
+    caseUC32A(["UC-32A: Review and record resource requests"])
+    caseUC34B(["UC-34B: Decide report release and generate a signed file"])
+    caseUC35(["UC-35: Request and review a partner report"])
+    caseUC36(["UC-36: Export selected situation findings"])
+    caseUC39(["UC-39: Review notifications and enable browser push"])
+  end
+  actorresponse --- caseUC01
+  actorresponse --- caseUC02
+  actorresponse --- caseUC03
+  actorsmsGateway --- caseUC03
+  actorresponse --- caseUC13B
+  actorresponse --- caseUC20B
+  actorresponse --- caseUC22A
+  actorresponse --- caseUC22B
+  actorweatherProvider --- caseUC22B
+  actorresponse --- caseUC23B
+  actorresponse --- caseUC24
+  actorweatherProvider --- caseUC24
+  actorresponse --- caseUC25A
+  actorresponse --- caseUC25B
+  actorresponse --- caseUC26A
+  actorresponse --- caseUC26B
+  actorresponse --- caseUC27
+  actorresponse --- caseUC28
+  actorresponse --- caseUC29
+  actorresponse --- caseUC30
+  actorresponse --- caseUC32A
+  actorresponse --- caseUC34B
+  actorsafeTrack --- caseUC34B
+  actorevaTrack --- caseUC34B
+  actortrackingAid --- caseUC34B
+  actorresponse --- caseUC35
+  actorsafeTrack --- caseUC35
+  actorevaTrack --- caseUC35
+  actortrackingAid --- caseUC35
+  actorresponse --- caseUC36
+  actorresponse --- caseUC39
+  actorbrowserPush --- caseUC39

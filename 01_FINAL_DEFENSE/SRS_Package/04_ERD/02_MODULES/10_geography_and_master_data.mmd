@@ -1,0 +1,151 @@
+erDiagram
+  direction LR
+  %% Physical FKs only; views and independent stores receive no invented links.
+  addresses["addresses (SHARED DEPENDENCY)"] {
+    int address_id PK
+    int barangay_id FK
+    int sitio_id FK
+    int purok_id FK
+    int zipcode_id FK
+    datetime created_at
+  }
+  barangayBoundaries["barangay_boundaries (RESQ MAPPING)"] {
+    string psgc_code PK
+    int barangay_id FK
+    datetime created_at
+  }
+  barangays["barangays (SHARED DEPENDENCY)"] {
+    int barangay_id PK
+    string barangay_code UK
+    int city_id FK
+  }
+  cities["cities (SHARED DEPENDENCY)"] {
+    int city_id PK
+    string city_code UK
+    int province_id FK
+  }
+  civilStatuses["civil_statuses (SHARED DEPENDENCY)"] {
+    int status_id PK
+    string status_key UK
+    string status_label
+  }
+  educationLevels["education_levels (SHARED DEPENDENCY)"] {
+    int education_level_id PK
+    string education_level_key UK
+  }
+  genders["genders (SHARED DEPENDENCY)"] {
+    int gender_id PK
+    string gender_key UK
+  }
+  householdGeographicClassifications["household_geographic_classifications (RESQ MAPPING)"] {
+    string household_id PK,FK
+    string status
+    int sitio_id FK
+    int purok_id FK
+    datetime created_at
+  }
+  householdMembers["household_members (SHARED DEPENDENCY)"] {
+    string member_id PK
+    string household_id FK
+    string first_name
+    string last_name
+    int gender_id FK
+    int relationship_id FK
+    int civil_status_id FK
+    int occupation FK
+    int education_level_id FK
+    datetime created_at
+    string name
+  }
+  households["households (SHARED DEPENDENCY)"] {
+    string household_id PK
+    string household_code UK
+    string household_name
+    string created_by FK
+    int address_id FK
+    datetime created_at
+    string login_user_id FK
+  }
+  memberVulnerableGroups["member_vulnerable_groups (SHARED DEPENDENCY)"] {
+    int id PK
+    string member_id FK
+    int vulnerable_group_id FK
+  }
+  occupations["occupations (SHARED DEPENDENCY)"] {
+    int occuaption_id PK
+  }
+  provinces["provinces (SHARED DEPENDENCY)"] {
+    int province_id PK
+    string province_code UK
+    int region_id FK
+  }
+  purokBoundaries["purok_boundaries (RESQ MAPPING)"] {
+    int purok_id PK,FK
+    text source
+    datetime created_at
+  }
+  puroks["puroks (SHARED DEPENDENCY)"] {
+    int purok_id PK
+    int sitio_id FK
+  }
+  regions["regions (SHARED DEPENDENCY)"] {
+    int region_id PK
+    string region_code UK
+  }
+  relationships["relationships (SHARED DEPENDENCY)"] {
+    int relationship_id PK
+    string relationship_key UK
+    boolean is_active
+    datetime created_at
+  }
+  sitios["sitios (SHARED DEPENDENCY)"] {
+    int sitio_id PK
+    int barangay_id FK
+  }
+  users["users (SHARED DEPENDENCY)"] {
+    string user_id PK
+    string first_name
+    string last_name
+    string name
+    int role_id FK
+    string assigned_center_id FK
+    string household_id FK
+    string member_id FK,UK
+    boolean is_active
+  }
+  vulnerableGroups["vulnerable_groups (SHARED DEPENDENCY)"] {
+    int vulnerable_group_id PK
+    string vulnerable_group_key UK
+  }
+  zipcodes["zipcodes (SHARED DEPENDENCY)"] {
+    int zipcode_id PK
+    int city_id FK
+  }
+  barangays |o..o{ addresses : "barangay_id"
+  puroks |o..o{ addresses : "purok_id"
+  sitios |o..o{ addresses : "sitio_id"
+  zipcodes |o..o{ addresses : "zipcode_id"
+  barangays |o..o{ barangayBoundaries : "barangay_id"
+  cities ||..o{ barangays : "city_id"
+  provinces ||..o{ cities : "province_id"
+  households ||--o| householdGeographicClassifications : "household_id"
+  puroks |o..o{ householdGeographicClassifications : "purok_id"
+  sitios |o..o{ householdGeographicClassifications : "sitio_id"
+  civilStatuses |o..o{ householdMembers : "civil_status_id"
+  educationLevels |o..o{ householdMembers : "education_level_id"
+  genders |o..o{ householdMembers : "gender_id"
+  households |o..o{ householdMembers : "household_id"
+  occupations |o..o{ householdMembers : "occupation"
+  relationships |o..o{ householdMembers : "relationship_id"
+  addresses |o..o{ households : "address_id"
+  users |o..o{ households : "created_by"
+  users |o..o{ households : "login_user_id"
+  vulnerableGroups ||..o{ memberVulnerableGroups : "vulnerable_group_id"
+  householdMembers |o..o{ memberVulnerableGroups : "member_id"
+  regions ||..o{ provinces : "region_id"
+  puroks ||--o| purokBoundaries : "purok_id"
+  sitios ||..o{ puroks : "sitio_id"
+  barangays ||..o{ sitios : "barangay_id"
+  households |o..o{ users : "household_id"
+  householdMembers |o..o| users : "member_id"
+  cities ||..o{ zipcodes : "city_id"

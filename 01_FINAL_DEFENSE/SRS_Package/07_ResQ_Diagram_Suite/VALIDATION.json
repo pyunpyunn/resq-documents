@@ -1,0 +1,54 @@
+{
+  "diagrams": 168,
+  "pngs": 168,
+  "svgs": 168,
+  "per_family": {
+    "01_ERD": 24,
+    "02_Use_Case": 24,
+    "03_Flow_Chart": 24,
+    "04_Swim_Lane": 24,
+    "06_System_Architecture": 24,
+    "07_Tech_Stack": 24,
+    "05_Data_Flow": 24
+  },
+  "checks": {
+    "inter_loaded": true,
+    "native_editable_svg_text": true,
+    "palette_only": true,
+    "no_clipped_text": true,
+    "no_table_text_overflow": true,
+    "no_connector_card_obstructions": true,
+    "no_connector_label_obstructions": true,
+    "orthogonal_except_uml": true,
+    "decision_yes_no_exits": true,
+    "distinct_decision_exit_ports": true,
+    "green_yes_red_no_branches": true,
+    "role_specific_use_case_associations": true,
+    "first_login_setup_isolated": true,
+    "onesignal_disaster_alerts_only": true,
+    "evatrack_owns_arrival_verification": true,
+    "dfd_labels_clear_of_connectors": true,
+    "one_system_lane_per_step": true,
+    "dfd_process_store_rules": true,
+    "clients_use_api_not_database": true,
+    "png_dpi_300": true,
+    "png_source_hash_match": true
+  },
+  "scope": {
+    "full": 7,
+    "compact": 7,
+    "user_role": 70,
+    "module": 84
+  },
+  "source_inventory": {
+    "functional_use_cases": 50,
+    "api_routes": 211,
+    "physical_tables": 102,
+    "foreign_keys": 174
+  },
+  "limits": [
+    "Large full-system diagrams are reference atlases; role/module views are intended for page-sized academic figures.",
+    "Route checks reject card obstructions and enforce 90-degree crossings; non-planar full graphs can still require crossings.",
+    "Schema, permission and API evidence are source snapshots, not production or partner acceptance evidence."
+  ]
+}

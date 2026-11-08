@@ -1,0 +1,45 @@
+flowchart LR
+  subgraph lane0["Household resident"]
+    direction TB
+    start(["Submit permitted event safety report"])
+  end
+  subgraph lane1["API"]
+    direction TB
+    scope{"Identity, event and status choices valid?"}
+    permit{"Dispatch action and availability valid?"}
+  end
+  subgraph lane2["Client"]
+    direction TB
+    error(["Show input or scope error"])
+  end
+  subgraph lane3["Operational data"]
+    direction TB
+    status[("Record evidence and current household status")]
+    assignment[("Persist scoped assignment and household queue")]
+  end
+  subgraph lane4["HQ / monitoring services"]
+    direction TB
+    priority["Read actual safety, vulnerability and geographic priority"]
+  end
+  subgraph lane5["Authorized HQ dispatcher"]
+    direction TB
+    choose[/"Select valid responders and household targets"/]
+  end
+  subgraph lane6["Assigned rescuers"]
+    direction TB
+    respond["Navigate and record field progress/assessment"]
+  end
+  subgraph lane7["HQ / affected clients"]
+    direction TB
+    review(["Review recorded results and refreshed safety evidence"])
+  end
+  start --> scope
+  scope -->|"No"| error
+  scope -->|"Yes"| status
+  status --> priority
+  priority --> choose
+  choose --> permit
+  permit -->|"No"| error
+  permit -->|"Yes"| assignment
+  assignment --> respond
+  respond --> review

@@ -1,0 +1,36 @@
+flowchart LR
+  subgraph lane0["Household resident"]
+    direction TB
+    start(["Open the installed household app"])
+    choose{"Choose permitted household task"}
+  end
+  subgraph lane1["API"]
+    direction TB
+    auth["Authenticate and resolve phone owner"]
+    check{"Request ownership, event and fields valid?"}
+  end
+  subgraph lane2["Mobile client"]
+    direction TB
+    setup["Complete required setup or open saved overview"]
+    report["Safety or trusted-household report"]
+    profile["Permitted profile, geotag or QR task"]
+    read["Read alerts, history or available site information"]
+    error(["Show validation or connectivity limit"])
+    view(["Display actual result and refresh account-scoped cache"])
+  end
+  subgraph lane3["Operational data"]
+    direction TB
+    store[("Read or persist scoped household records")]
+  end
+  start --> auth
+  auth --> setup
+  setup --> choose
+  choose -->|"Safety / trusted report"| report
+  choose -->|"Profile / location / QR"| profile
+  choose -->|"Information"| read
+  report --> check
+  profile --> check
+  read -->|"Online fetch"| check
+  check -->|"No"| error
+  check -->|"Yes"| store
+  store --> view

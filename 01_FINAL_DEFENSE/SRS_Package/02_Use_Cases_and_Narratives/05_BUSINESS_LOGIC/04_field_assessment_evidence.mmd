@@ -1,0 +1,27 @@
+flowchart LR
+  subgraph lane0["Assigned rescuer / verifier"]
+    direction TB
+    start(["Open assigned household or verification task"])
+  end
+  subgraph lane1["Mobile client"]
+    direction TB
+    entry[/"Capture check-in, member status and catalog damage"/]
+    reject(["Correct stale scope, missing data or invalid choice"])
+  end
+  subgraph lane2["API"]
+    direction TB
+    gate{"Identity, event, queue and fields valid?"}
+  end
+  subgraph lane3["Operational data"]
+    direction TB
+    save[("Persist report and permitted status/verification links")]
+  end
+  subgraph lane4["Authorized HQ user"]
+    direction TB
+    review(["Read field findings and current safety evidence"])
+  end
+  start --> entry
+  entry --> gate
+  gate -->|"No"| reject
+  gate -->|"Yes"| save
+  save --> review

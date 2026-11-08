@@ -1,0 +1,30 @@
+erDiagram
+  direction LR
+  %% Physical FKs only; views and independent stores receive no invented links.
+  auditLogs["audit_logs (SHARED DEPENDENCY)"] {
+    int audit_log_id PK
+    string user_id FK
+    string role_key
+    datetime created_at
+  }
+  landingInquiries["landing_inquiries (RESQ MAPPING)"] {
+    int inquiry_id PK
+    string name
+    text message
+    string status
+    string handled_by_user_id FK
+    datetime created_at
+  }
+  users["users (SHARED DEPENDENCY)"] {
+    string user_id PK
+    string first_name
+    string last_name
+    string name
+    int role_id FK
+    string assigned_center_id FK
+    string household_id FK
+    string member_id FK,UK
+    boolean is_active
+  }
+  users |o..o{ auditLogs : "user_id"
+  users |o..o{ landingInquiries : "handled_by_user_id"

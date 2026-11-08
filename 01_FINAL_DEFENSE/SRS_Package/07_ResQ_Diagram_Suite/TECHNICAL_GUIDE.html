@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A source-grounded, plain-language technical guide to the RESQPERATION system.">
+  <title>RESQPERATION | Technical Guide</title>
+  <style>
+    :root{--navy:#12306b;--ink:#17243a;--muted:#526174;--line:#d8e1eb;--paper:#f4f7fb;--card:#fff;--blue:#eaf2ff;--green:#e8f6ef;--amber:#fff5da;--red:#fff0ed}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:82px}
+    body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 "Segoe UI",Arial,sans-serif}
+    header{background:var(--navy);color:#fff;padding:34px max(22px,calc((100vw - 1180px)/2))}
+    header h1{font-size:clamp(28px,4vw,42px);line-height:1.15;margin:0 0 12px}
+    header p{max-width:900px;margin:0;color:#e5edff}
+    nav{position:sticky;top:0;z-index:2;background:#fff;border-bottom:1px solid var(--line);padding:10px max(16px,calc((100vw - 1180px)/2));display:flex;gap:8px;overflow-x:auto;white-space:nowrap}
+    nav a,.button{display:inline-block;border:1px solid var(--line);border-radius:8px;padding:6px 10px;color:var(--navy);text-decoration:none;font-size:14px}
+    nav a:hover,.button:hover{background:var(--blue)}
+    main{max-width:1180px;margin:24px auto 50px;padding:0 18px}
+    section,.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;margin:18px 0}
+    h2{color:var(--navy);font-size:25px;margin:0 0 12px}
+    h3{color:#1d3e72;font-size:19px;margin:24px 0 8px}
+    h4{font-size:16px;margin:18px 0 6px}
+    p{margin:8px 0 12px}
+    a{color:#174c95}
+    .lead{font-size:18px}
+    .note,.verified,.caution,.gap{padding:12px 15px;border-radius:9px;margin:14px 0}
+    .note{background:var(--blue);border-left:4px solid #477fd1}
+    .verified{background:var(--green);border-left:4px solid #319060}
+    .caution{background:var(--amber);border-left:4px solid #d19920}
+    .gap{background:var(--red);border-left:4px solid #c75a48}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .grid .card{margin:0}
+    .diagram{font:15px/1.8 Consolas,"Courier New",monospace;background:#101d35;color:#e8efff;padding:18px;border-radius:10px;overflow-x:auto}
+    .diagram b{color:#9bc4ff}
+    .backend-visual{margin:14px 0 20px;overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:#f8fbff}
+    .backend-visual svg{display:block;width:100%;min-width:860px;height:auto}
+    .backend-visual .lane{fill:#edf3fa;stroke:#d8e1eb}
+    .backend-visual .node{fill:#fff;stroke:#7392bd;stroke-width:2}
+    .backend-visual .node-main{fill:#eaf2ff;stroke:#477fd1;stroke-width:2}
+    .backend-visual .node-db{fill:#e8f6ef;stroke:#319060;stroke-width:2}
+    .backend-visual .node-optional{fill:#fff5da;stroke:#d19920;stroke-width:2;stroke-dasharray:6 4}
+    .backend-visual .edge{fill:none;stroke:#477fd1;stroke-width:3;marker-end:url(#arrow)}
+    .backend-visual .edge-return{fill:none;stroke:#319060;stroke-width:3;stroke-dasharray:7 5;marker-end:url(#arrow-green)}
+    .backend-visual .edge-optional{fill:none;stroke:#b18419;stroke-width:2;stroke-dasharray:6 5;marker-end:url(#arrow-amber)}
+    .backend-visual .edge-runtime{fill:none;stroke:#477fd1;stroke-width:3;marker-end:url(#runtime-arrow)}
+    .backend-visual .edge-runtime-data{fill:none;stroke:#319060;stroke-width:3;marker-end:url(#runtime-arrow-green)}
+    .backend-visual .edge-runtime-optional{fill:none;stroke:#b18419;stroke-width:2;stroke-dasharray:6 5;marker-end:url(#runtime-arrow-amber)}
+    .backend-visual .svg-title{font:700 17px "Segoe UI",Arial,sans-serif;fill:#12306b}
+    .backend-visual .svg-text{font:14px "Segoe UI",Arial,sans-serif;fill:#17243a}
+    .backend-visual .svg-small{font:12px "Segoe UI",Arial,sans-serif;fill:#526174}
+    .role-matrix{font-size:13px;min-width:1050px}
+    .role-matrix th:not(:first-child),.role-matrix td:not(:first-child){text-align:center;min-width:74px}
+    .role-matrix td.allowed{font-size:18px;font-weight:700;color:#17633b;background:#eff9f3}
+    .role-matrix td.denied{color:#8a94a3}
+    .role-matrix th:first-child,.role-matrix td:first-child{min-width:280px}
+    table{width:100%;border-collapse:collapse;margin:12px 0 18px;font-size:14px}
+    th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+    th{background:#edf3fa;color:#17396e}
+    code{font:0.92em Consolas,"Courier New",monospace;background:#edf1f6;padding:1px 4px;border-radius:4px;overflow-wrap:anywhere}
+    ul,ol{padding-left:22px}
+    li{margin:5px 0}
+    .small{font-size:13px;color:var(--muted)}
+    .tag{font-size:12px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;border-radius:99px;padding:2px 8px;white-space:nowrap}
+    .tag.yes{background:#dff3e8;color:#175d39}
+    .tag.config{background:#fff0c7;color:#775300}
+    .tag.unverified{background:#fde4df;color:#8b2e20}
+    .toc{columns:2;max-width:900px}
+    footer{border-top:1px solid var(--line);padding:20px;color:var(--muted);font-size:13px}
+    @media(max-width:720px){.grid{grid-template-columns:1fr}.toc{columns:1}section,.card{padding:16px}table{display:block;overflow-x:auto}}
+    @media print{nav{display:none}body{background:#fff}section,.card{break-inside:avoid;box-shadow:none}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>RESQPERATION Technical Guide</h1>
+    <p>A plain-language, source-grounded guide for the defense team: what the system is, how its parts communicate, where important rules and integrations live, why each part exists, and what is not proven by code alone.</p>
+    <p style="margin-top:14px"><a class="button" href="index.html">Back to Diagram Suite</a> <a class="button" href="API_FUNCTION_LIST.csv">Open complete API route inventory</a></p>
+  </header>
+  <nav aria-label="Guide sections">
+    <a href="#start">Start here</a><a href="#architecture">Architecture</a><a href="#api">API</a><a href="#implementation">File tree / backend flow</a><a href="#backend-map">Backend diagrams</a><a href="#stack">Technology</a><a href="#roles">Roles</a><a href="#partners">Partner systems</a><a href="#maps">Maps</a><a href="#weather">Weather</a><a href="#communications">Communications</a><a href="#network-state">Network / state / offline</a><a href="#standards">Standards</a><a href="#tools">Tools</a><a href="#glossary">Glossary</a>
+  </nav>
+  <main>
+    <section id="start">
+      <h2>Start here: how to use this guide</h2>
+      <p class="lead">Think of RESQPERATION as two user-facing applications that send requests to one backend, which checks the request, applies rules, and reads or writes operational data.</p>
+      <div class="diagram"><b>Household mobile app</b> ─┐<br><b>Rescuer mobile app</b> ──┼─&gt; <b>Laravel JSON API</b> ──&gt; <b>MySQL operational data</b><br><b>Operations web app</b> ──┘&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─&gt; background jobs / external services<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─&gt; maps, weather and communication providers</div>
+      <div class="note"><b>How to present it:</b> explain one flow at a time: (1) who starts it, (2) which screen and API are involved, (3) what the backend verifies, (4) where information is stored, (5) what response or notification comes back. You do not need to claim that every optional service is running in every deployment.</div>
+      <p><b>Evidence labels used below</b></p>
+      <ul>
+        <li><span class="tag yes">In source</span> The repository contains implementation code or configuration for the behavior.</li>
+        <li><span class="tag config">Needs configuration</span> The code exists, but an endpoint, credential, service, worker, data asset, or permission must be configured.</li>
+        <li><span class="tag unverified">Not established</span> Source files or design documents do not prove a live partner connection, delivery, production deployment, or field acceptance.</li>
+      </ul>
+      <div class="caution"><b>Important:</b> a package, URL, sample environment setting, architecture diagram, or successful provider response is not by itself proof that a feature is operational in the deployed system. The implementation and the environment must both be checked.</div>
+      <h3>Contents</h3>
+      <ol class="toc">
+        <li><a href="#architecture">System architecture and data flow</a></li><li><a href="#api">API routing and implementation</a></li>
+        <li><a href="#implementation">Backend folders and one complete feature flow</a></li><li><a href="#backend-map">Visual backend request, runtime and configuration diagrams</a></li><li><a href="#network-state">Network, state, sessions, offline data and database indexes</a></li>
+        <li><a href="#stack">Technology stacks</a></li><li><a href="#roles">Roles and permissions</a></li>
+        <li><a href="#partners">SafeTrack, EvaTrack and TrackingAid</a></li><li><a href="#maps">Maps, layers and boundary data</a></li>
+        <li><a href="#weather">Weather and official advisories</a></li><li><a href="#communications">Push, SMS, PTT and realtime</a></li>
+        <li><a href="#standards">Coding standards</a></li><li><a href="#tools">Tools and deployment</a></li>
+        <li><a href="#operations">Configuration and operational limits</a></li><li><a href="#glossary">Glossary and defense prompts</a></li>
+      </ol>
+    </section>
+
+    <section id="architecture">
+      <h2>1. System architecture: what, how, where and why</h2>
+      <p><b>What:</b> a browser-based operations dashboard and an Expo mobile application (used by household and responder accounts) share a Laravel API. The API is the security and business-rule boundary. Clients should not connect directly to the production database.</p>
+      <p><b>How:</b> clients send JSON over HTTP(S); the backend authenticates and authorizes the caller, validates input, runs a workflow, persists data, and returns a structured response. Long-running notifications and partner handoffs can use queues.</p>
+      <p><b>Where:</b> the web application is under <code>resqperation-system/frontend-web</code>, the mobile client under <code>resqperation-system/frontend-mobile</code>, and the API under <code>resqperation-system/backend-laravel</code>.</p>
+      <p><b>Why:</b> a single backend lets web and mobile share identity, permissions and operational records, and makes server-side checks authoritative instead of trusting a client screen.</p>
+      <table>
+        <thead><tr><th>Layer</th><th>What it does</th><th>Main project location</th></tr></thead>
+        <tbody>
+          <tr><td>Web client</td><td>Operations screens: dashboard, alerts, dispatch, household status, requests, maps, weather, reports and archives.</td><td><a href="../../../../resqperation-system/frontend-web/src/App.jsx">Web routes and page registry</a></td></tr>
+          <tr><td>Mobile client</td><td>Household and rescuer workflows, device location, field reports, navigation, notifications and radio audio.</td><td><a href="../../../../resqperation-system/frontend-mobile/app/">Expo application routes</a></td></tr>
+          <tr><td>API / application layer</td><td>Authentication, request validation, role checks, workflows, external service clients, database access and API response formatting.</td><td><a href="../../../../resqperation-system/backend-laravel/routes/api.php">Laravel API routes</a>; <a href="../../../../resqperation-system/backend-laravel/app/">Backend application code</a></td></tr>
+          <tr><td>Persistence</td><td>Relational operational records; the configured database connection must be selected correctly for the deployment.</td><td><a href="../../../../resqperation-system/backend-laravel/database/">Migrations and database assets</a></td></tr>
+          <tr><td>External services</td><td>Maps, routing, forecast/advisory sources, notifications, SMS gateway and partner data exchange.</td><td>Provider-specific code and configuration, detailed below.</td></tr>
+        </tbody>
+      </table>
+      <div class="grid">
+        <div class="card"><h3>Typical read flow</h3><ol><li>A user opens a screen.</li><li>The client API helper makes a request with the current authentication token.</li><li>Laravel checks the route middleware and caller permissions.</li><li>A controller delegates to a workflow/query/service.</li><li>Backend code reads permitted records and shapes a response.</li><li>The client renders the response or an explicit error/loading state.</li></ol></div>
+        <div class="card"><h3>Typical write flow</h3><ol><li>The user submits a status, report, dispatch or request.</li><li>The API validates payload and access rights.</li><li>A workflow applies business rules and records the change.</li><li>Audit/outbox/job work may record the action or notify recipients.</li><li>The API returns the saved state; the client refreshes its view.</li></ol></div>
+      </div>
+      <p>Source-backed architecture and diagram references: <a href="../../../../resqperation-system/docs/SYSTEM_ARCHITECTURE.md">system architecture narrative</a>, <a href="06_System_Architecture/index.html">architecture diagram family</a>, <a href="05_Data_Flow/index.html">data-flow diagrams</a>, <a href="01_ERD/index.html">database diagrams</a>. Treat diagrams as design aids; the current package versions and integration code below are stronger evidence for implementation specifics.</p>
+    </section>
+
+    <section id="api">
+      <h2>2. API routing and implementation across the system</h2>
+      <p>The Laravel API is versioned under <code>/api/v1</code>. The project's generated inventory contains <b>211 route entries</b> (some entries combine HTTP methods). Use the CSV for the complete current method, endpoint, controller/handler, middleware and route-name listing.</p>
+      <p><a class="button" href="API_FUNCTION_LIST.csv">Open all 211 route entries</a> <a class="button" href="../../../../resqperation-system/backend-laravel/routes/api.php">Open route definitions</a> <a class="button" href="assets/api-routes.json">Open route evidence JSON</a></p>
+      <table>
+        <thead><tr><th>Route family</th><th>Responsibilities</th><th>Typical implementation destination</th></tr></thead>
+        <tbody>
+          <tr><td>Authentication and account</td><td>Login, current identity, logout, password recovery, account/device setup.</td><td><code>AuthController</code>, authentication and throttling middleware</td></tr>
+          <tr><td>Household</td><td>Household profile/setup, safety status, trusted household, device and location-related workflows.</td><td>Household API controllers, mobile services and household authorization guards</td></tr>
+          <tr><td>Rescuer / field work</td><td>Responder account/profile, team, dispatch updates, GPS-related data, field reports and radio audio.</td><td>Rescuer controllers, queries, workflows and presenters</td></tr>
+          <tr><td>Operations web</td><td>Dashboard, broadcast, dispatch, household oversight, resource request queue, situation reports, archive and export.</td><td>Web routes with authentication, role/module-access checks and request throttling as appropriate</td></tr>
+          <tr><td>External requests/reports</td><td>Partner intake, exchange status and guarded report access.</td><td>External API-key middleware, integration clients and validation workflows</td></tr>
+          <tr><td>Weather / mapping / navigation</td><td>Expose server-side snapshots, map configuration/data and routing/navigation support.</td><td>Weather, mapping and navigation controllers/services</td></tr>
+          <tr><td>Notifications / SMS</td><td>Device registration, notification delivery workflow and inbound SMS endpoint.</td><td>Notification controllers, queued jobs and provider services</td></tr>
+        </tbody>
+      </table>
+      <h3>What each backend layer means</h3>
+      <table>
+        <thead><tr><th>Layer</th><th>Plain-language job</th><th>Why separate it?</th></tr></thead>
+        <tbody>
+          <tr><td>Route</td><td>Maps HTTP method and URL to a handler; attaches security rules.</td><td>One place to see which request can reach which action.</td></tr>
+          <tr><td>Middleware</td><td>Checks authentication, role/module access, device ownership, rate limits and integration keys.</td><td>Rejects unauthorized or abusive requests before business code runs.</td></tr>
+          <tr><td>Controller / Request</td><td>Accepts the HTTP request and handles request-specific validation/response behavior.</td><td>Keeps transport details out of core workflows.</td></tr>
+          <tr><td>Service / Workflow</td><td>Implements an operation such as dispatching, validating a request or forwarding a partner record.</td><td>Centralizes business rules for multiple screens or routes.</td></tr>
+          <tr><td>Query / Model</td><td>Reads and writes database records.</td><td>Separates data access from HTTP handling.</td></tr>
+          <tr><td>Presenter / API Resource</td><td>Converts internal records to a stable response shape.</td><td>Limits coupling between the database schema and frontend data contract.</td></tr>
+          <tr><td>Job / outbox</td><td>Retries or performs provider/partner work outside the user's immediate request.</td><td>Provider downtime need not silently look like a successful database write.</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>How to trace a real endpoint for a defense answer:</b> take one row from the CSV; open its route in <code>routes/api.php</code>; follow its controller; identify middleware; then follow the called workflow/service and query/model. Finish with the client helper/page that calls it. The API inventory is the quickest entry point.</div>
+    </section>
+
+    <section id="implementation">
+      <h2>2A. Where code lives: file tree, backend flow and how files connect</h2>
+      <p>A feature is usually split across files because each file has one job. For example, a controller should translate HTTP into an application call; it should not also contain the whole user interface, permission catalog, every SQL query and response formatting. Laravel's dependency container connects the classes when a request arrives.</p>
+      <h3>Backend tree (the folders relevant to everyday feature work)</h3>
+      <div class="diagram"><b>backend-laravel/</b><br>
+├─ routes/<br>
+│  ├─ api.php                         HTTP method + URL + controller + middleware<br>
+│  ├─ web.php                         browser/server-rendered routes, if used<br>
+│  └─ channels.php                    authorization for broadcast channels<br>
+├─ app/<br>
+│  ├─ Http/<br>
+│  │  ├─ Controllers/Api/             HTTP entry points and response status<br>
+│  │  ├─ Requests/                    request validation / authorization rules<br>
+│  │  ├─ Middleware/                  authentication-adjacent gates, roles, device checks<br>
+│  │  └─ Resources/                   outward JSON representations<br>
+│  ├─ Services/{Mobile,Web,Shared,Navigation}/ business workflows/integrations<br>
+│  ├─ Actions/                        focused reusable domain operations<br>
+│  ├─ Queries/                        read-focused database/query logic<br>
+│  ├─ Models/                         database entities and relationships<br>
+│  ├─ Presenters/                     format/use-case response or partner payloads<br>
+│  ├─ Jobs/                            queueable background tasks<br>
+│  ├─ Events/                          application events<br>
+│  ├─ Observers/                      optional model hooks (no observer classes currently)<br>
+│  ├─ Console/                        Artisan commands/scheduled work<br>
+│  ├─ Providers/                      dependency/service registration<br>
+│  ├─ Support/                        shared low-level helpers<br>
+│  └─ Data/                            typed data objects, when used<br>
+├─ bootstrap/app.php                  framework boot, routes, middleware aliases/errors<br>
+├─ config/                            environment-backed service/framework settings<br>
+├─ database/<br>
+│  ├─ migrations/                     versioned schema changes and indexes<br>
+│  ├─ seeders/ + factories/           initial/test data creation<br>
+│  └─ schema/                         documented schema snapshots<br>
+├─ tests/                              automated backend behavior checks<br>
+└─ storage/                            logs, generated files, caches, runtime artifacts</div>
+      <h3>Frontend tree (what talks to the API)</h3>
+      <div class="grid">
+        <div class="card"><h4>Web: <code>frontend-web/src/</code></h4><ul>
+          <li><code>main.jsx</code>: starts React and Redux Provider.</li><li><code>App.jsx</code> and <code>pages/</code>: browser routes, page selection, role-gated navigation.</li>
+          <li><code>components/</code>: reusable screens and widgets.</li><li><code>api/</code>: Axios client, token, endpoint helpers, response checks.</li>
+          <li><code>state/</code>: Redux store, RTK Query endpoints, server response cache.</li><li><code>utils/</code>: shared transformations, access helpers and UI-independent logic.</li>
+          <li><code>styles/</code>: CSS presentation.</li></ul></div>
+        <div class="card"><h4>Mobile: <code>frontend-mobile/</code></h4><ul>
+          <li><code>app/</code>: Expo Router file-based screens and navigation.</li><li><code>components/</code>: household, rescuer and common UI.</li>
+          <li><code>api/</code>: Axios network client and endpoint functions.</li><li><code>state/</code>: small Redux transport/cache store; not all UI state.</li>
+          <li><code>hooks/</code>: reusable React behavior such as overview refresh/cache.</li><li><code>utils/</code>: GPS, secure storage, SQLite, route packs and sync logic.</li>
+          <li><code>tests/</code>, <code>plugins/</code>, <code>android/</code>: test support, Expo/native build integration.</li></ul></div>
+      </div>
+      <h3>One real module traced end to end: household status</h3>
+      <div class="diagram"><b>Household screen</b><br>
+  ↓ user presses save<br>
+frontend-mobile/api/household.ts : saveHouseholdMemberStatus(memberId, payload)<br>
+  ↓ Axios POST /household/members/{memberId}/status<br>
+backend-laravel/routes/api.php : /api/v1 prefix + auth/owner/rate/realtime/role middleware<br>
+  ↓ routes to<br>
+HouseholdMobileController::storeMemberStatus()<br>
+  ↓ delegates to<br>
+HouseholdMobileStatusWorkflow<br>
+  ├─ HouseholdMobileSupport     resolve caller household / audit / schema helpers<br>
+  ├─ HouseholdMobileReadQuery   active event, member, allowed status options<br>
+  ├─ HouseholdMobileStatusWriter device + current-status writes<br>
+  ├─ HouseholdMobilePresenter   safe names / labels / response formatting<br>
+  └─ DB transaction              status log + current member/household state + audit<br>
+  ↓ JSON 201 response<br>
+client updates screen state, refreshes/invalidates any stale cached reads</div>
+      <p><b>What each part contributes:</b> the route identifies an HTTP entry point and applies gates; middleware identifies the caller and checks fixed role/device/household ownership; the controller is a thin request adapter; the workflow contains use-case rules and orchestration; query classes retrieve the facts needed for decisions; writer/action/model code persists consistent data; presenter/resource controls the output contract; tests exercise the decision rules and failure cases.</p>
+      <p>Source links: <a href="../../../../resqperation-system/frontend-mobile/api/household.ts">mobile status API functions</a>, <a href="../../../../resqperation-system/backend-laravel/routes/api.php">route and middleware definition</a>, <a href="../../../../resqperation-system/backend-laravel/app/Http/Controllers/Api/HouseholdMobileController.php">controller</a>, <a href="../../../../resqperation-system/backend-laravel/app/Services/Mobile/HouseholdMobileStatusWorkflow.php">workflow/business rules</a>, <a href="../../../../resqperation-system/backend-laravel/app/Services/Mobile/HouseholdMobileStatusWriter.php">status writer</a>, <a href="../../../../resqperation-system/backend-laravel/app/Queries/HouseholdMobileReadQuery.php">read query</a>, <a href="../../../../resqperation-system/backend-laravel/app/Presenters/HouseholdMobilePresenter.php">presenter</a>.</p>
+      <section id="backend-map">
+        <h3>Visual backend map: one real module, plus the supporting runtime</h3>
+        <p>This diagram follows the household member status endpoint in the current code. Solid blue arrows are the synchronous request path. The green dashed return represents the successful response. Amber dashed boxes are conditional background or boot-time mechanisms; they are not automatically part of this status-save request. On a narrow screen, swipe/scroll horizontally inside a diagram to see every step.</p>
+        <div class="backend-visual" role="img" aria-label="Diagram of the household status API request through Laravel routes, middleware, controller, workflow, query and support helpers, database transaction, and JSON response; optional events, jobs, console, and providers are separated.">
+          <svg viewBox="0 0 1160 795" xmlns="http://www.w3.org/2000/svg" aria-labelledby="backend-flow-title backend-flow-desc">
+            <title id="backend-flow-title">Household status request through the Laravel backend</title>
+            <desc id="backend-flow-desc">The client sends a POST request to the versioned API. Laravel routes and middleware protect it, a controller delegates to a workflow, the workflow reads and validates data, writes status history and current state inside a transaction, and returns JSON. Optional jobs, events, console scheduling, and service providers are shown separately.</desc>
+            <defs>
+              <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#477fd1"/></marker>
+              <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#319060"/></marker>
+              <marker id="arrow-amber" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#b18419"/></marker>
+            </defs>
+            <rect class="lane" x="14" y="14" width="1132" height="510" rx="14"/>
+            <text class="svg-title" x="34" y="43">SYNCHRONOUS REQUEST — household member status</text>
+            <rect class="node-main" x="38" y="72" width="210" height="78" rx="10"/>
+            <text class="svg-title" x="54" y="100">1. Mobile client</text><text class="svg-text" x="54" y="124">POST status + bearer token</text>
+            <rect class="node" x="300" y="72" width="210" height="78" rx="10"/>
+            <text class="svg-title" x="316" y="100">2. Laravel route</text><text class="svg-text" x="316" y="124">routes/api.php, /api/v1</text>
+            <rect class="node" x="562" y="72" width="238" height="78" rx="10"/>
+            <text class="svg-title" x="578" y="100">3. Middleware gates</text><text class="svg-text" x="578" y="124">auth, household owner, role, rate</text>
+            <rect class="node-main" x="852" y="72" width="254" height="78" rx="10"/>
+            <text class="svg-title" x="868" y="100">4. Controller</text><text class="svg-text" x="868" y="124">HouseholdMobileController</text>
+            <path class="edge" d="M248 111 H294"/><path class="edge" d="M510 111 H556"/><path class="edge" d="M800 111 H846"/>
+            <path class="edge" d="M979 150 V184"/>
+            <rect class="node-main" x="740" y="184" width="366" height="78" rx="10"/>
+            <text class="svg-title" x="758" y="212">5. Service workflow</text><text class="svg-text" x="758" y="236">HouseholdMobileStatusWorkflow coordinates the use case</text>
+            <path class="edge" d="M740 223 H696"/>
+            <rect class="node" x="398" y="184" width="298" height="78" rx="10"/>
+            <text class="svg-title" x="416" y="212">6. Query + Support</text><text class="svg-text" x="416" y="236">read event/member/options; resolve household/schema</text>
+            <path class="edge" d="M547 262 V295"/>
+            <rect class="node" x="398" y="295" width="298" height="78" rx="10"/>
+            <text class="svg-title" x="416" y="323">7. Validate and decide</text><text class="svg-text" x="416" y="347">owner, active event, member, allowed status, fields</text>
+            <path class="edge" d="M547 373 V405"/>
+            <rect class="node-main" x="398" y="405" width="298" height="88" rx="10"/>
+            <text class="svg-title" x="416" y="434">8. DB transaction + Writer</text><text class="svg-text" x="416" y="458">insert history; update member/household/device</text><text class="svg-small" x="416" y="478">audit write is grouped with the logical operation</text>
+            <path class="edge" d="M696 449 H744"/>
+            <rect class="node-db" x="744" y="405" width="362" height="88" rx="10"/>
+            <text class="svg-title" x="762" y="434">9. Operational database</text><text class="svg-text" x="762" y="458">MySQL tables; commit all writes or roll back</text><text class="svg-small" x="762" y="478">DB facade / query builder; not a direct client connection</text>
+            <path class="edge-return" d="M925 493 V558 H750"/>
+            <rect class="node-db" x="398" y="558" width="352" height="76" rx="10"/>
+            <text class="svg-title" x="416" y="586">10. JSON response</text><text class="svg-text" x="416" y="610">201 Created + status log/member status</text>
+            <path class="edge-return" d="M398 596 H170 V150"/>
+            <text class="svg-small" x="44" y="560">Successful data is committed first.</text>
+            <text class="svg-small" x="44" y="581">Then response returns over the same</text>
+            <text class="svg-small" x="44" y="602">HTTP connection to update the screen.</text>
+            <rect class="lane" x="14" y="654" width="1132" height="126" rx="14"/>
+            <text class="svg-title" x="34" y="682">OTHER BACKEND PATHS — only when a feature/deployment uses them</text>
+            <rect class="node-optional" x="38" y="697" width="220" height="64" rx="9"/>
+            <text class="svg-title" x="52" y="722">Events / Observers</text><text class="svg-small" x="52" y="744">signal or model lifecycle hook</text>
+            <rect class="node-optional" x="300" y="697" width="220" height="64" rx="9"/>
+            <text class="svg-title" x="314" y="722">Jobs / Queue worker</text><text class="svg-small" x="314" y="744">deferred delivery / long work</text>
+            <rect class="node-optional" x="562" y="697" width="220" height="64" rx="9"/>
+            <text class="svg-title" x="576" y="722">Console / Scheduler</text><text class="svg-small" x="576" y="744">manual or recurring commands</text>
+            <rect class="node-optional" x="824" y="697" width="282" height="64" rx="9"/>
+            <text class="svg-title" x="838" y="722">Providers (boot-time)</text><text class="svg-small" x="838" y="744">register bindings / framework services</text>
+          </svg>
+        </div>
+        <div class="note"><b>Precision:</b> the status endpoint shown uses the workflow, query, support helper, writer, and a DB transaction; its response is returned synchronously. An <code>Action</code> can be called by a writer (the writer has a reusable <code>UpdateHouseholdStatus</code> action), while this specific member-status transaction also performs direct query-builder writes. This request is not automatically sent through an event, queued job, observer, or console command.</div>
+        <h4>What each Laravel folder contributes to that visual</h4>
+        <table>
+          <thead><tr><th>Folder/file</th><th>What it does</th><th>In the status example / important distinction</th></tr></thead>
+          <tbody>
+            <tr><td><code>routes/api.php</code></td><td>Maps HTTP method and URL to controller actions and attaches middleware.</td><td><code>POST /api/v1/household/members/{memberId}/status</code>; API prefix is loaded by Laravel routing bootstrap.</td></tr>
+            <tr><td><code>app/Http/Middleware</code></td><td>Checks identity, role, household/device access, headers and request limits before the action.</td><td>Route group has Sanctum auth, household owner binding, throttling and the household-resident role group.</td></tr>
+            <tr><td><code>app/Http/Controllers</code></td><td>HTTP adapter: receives request/path parameters and delegates to application logic.</td><td>Controller calls the status workflow; it does not own the whole business process.</td></tr>
+            <tr><td><code>app/Services</code></td><td>Coordinates a use case and its business rules; may call collaborators/integrations.</td><td>The workflow checks household, event, member and permitted status, then coordinates reads and writes.</td></tr>
+            <tr><td><code>app/Queries</code></td><td>Named read-focused queries keep data retrieval separate and reusable.</td><td>Reads the active event, member, and available status options; some queries use Laravel's query builder.</td></tr>
+            <tr><td><code>app/Support</code></td><td>Shared lower-level helpers used across workflows.</td><td>Schema checks, optional-column filtering and audit helpers are used where needed.</td></tr>
+            <tr><td><code>app/Actions</code></td><td>Small focused operations that implement a reusable state change.</td><td><code>UpdateHouseholdStatus</code> is called from the writer for the household roll-up; not every write must have a separate Action class.</td></tr>
+            <tr><td><code>app/Models</code></td><td>Eloquent objects representing tables and relationships; convenient for model-centric access.</td><td>Use when the feature needs Eloquent behavior. Other code, including this read query, uses <code>DB::table()</code>; a DB table does not require a Model class.</td></tr>
+            <tr><td><code>app/Presenters</code> and <code>app/Http/Resources</code></td><td>Format data for a client or external contract.</td><td>Presenter formats names/labels/timestamps; the workflow returns the JSON response. A Resource is used where the endpoint adopts one.</td></tr>
+            <tr><td><code>app/Data</code></td><td>Typed data-transfer objects/results that make structured values explicit.</td><td>Use when the workflow defines such a contract; not required for every request and not a database table.</td></tr>
+            <tr><td><code>app/Events</code>, <code>app/Jobs</code>, queues</td><td>Events announce something happened; listeners/jobs can perform follow-up work, with jobs deferred to a worker.</td><td>Optional side effects such as notifications or partner delivery; do not assume queue execution unless a worker and queue configuration are active.</td></tr>
+            <tr><td><code>app/Observers</code></td><td>Optional listeners for Eloquent model lifecycle events (for example, created/deleted).</td><td>No <code>app/Observers</code> directory/classes are present in this current source tree. Do not invent an observer step in a feature trace.</td></tr>
+            <tr><td><code>app/Console</code> and <code>routes/console.php</code></td><td>Artisan commands for manual operations; scheduler definitions trigger recurring commands.</td><td>Not part of an ordinary HTTP request. A deployed scheduler must be running for scheduled tasks to execute.</td></tr>
+            <tr><td><code>app/Providers</code></td><td>Application/framework boot registration such as bindings, listeners and shared services.</td><td>Providers boot as Laravel starts; they prepare the container and services rather than acting as an endpoint.</td></tr>
+            <tr><td><code>tests/</code></td><td>Automated checks for routes, rules, persistence, authorization, and expected errors.</td><td>Use tests to validate the module contract and regression behavior.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Visual runtime map: config, database, routes, storage, vendor and env</h3>
+        <p>These are different responsibilities: environment values supply deployment-specific settings; configuration files organize those settings; bootstrap loads the application and route registries; Composer installs PHP dependencies; database migrations define structure; storage holds runtime files.</p>
+        <div class="backend-visual" role="img" aria-label="Diagram showing environment files feeding Laravel config, bootstrap, routes and database connections; Composer manifests feeding vendor dependencies; migrations defining database structure; storage holding logs and generated files.">
+          <svg viewBox="0 0 1160 610" xmlns="http://www.w3.org/2000/svg" aria-labelledby="backend-runtime-title backend-runtime-desc">
+            <title id="backend-runtime-title">Laravel application runtime and deployment files</title>
+            <desc id="backend-runtime-desc">The .env file supplies private environment-specific values to Laravel configuration; bootstrap registers routes and middleware. Composer manifests install packages into vendor. Database migrations describe tables and indexes. Laravel connects to selected database services and writes runtime logs and generated files under storage.</desc>
+            <defs>
+              <marker id="runtime-arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#477fd1"/></marker>
+              <marker id="runtime-arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#319060"/></marker>
+              <marker id="runtime-arrow-amber" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#b18419"/></marker>
+            </defs>
+            <rect class="lane" x="14" y="14" width="1132" height="582" rx="14"/>
+            <text class="svg-title" x="34" y="44">PROJECT FILES → BOOTSTRAP → RUNTIME SERVICES</text>
+            <rect class="node-optional" x="44" y="72" width="245" height="94" rx="10"/>
+            <text class="svg-title" x="62" y="101">.env (private)</text><text class="svg-text" x="62" y="125">deployment values / secrets</text><text class="svg-small" x="62" y="147">not committed; never put in mobile app</text>
+            <rect class="node" x="44" y="194" width="245" height="82" rx="10"/>
+            <text class="svg-title" x="62" y="223">.env.example (template)</text><text class="svg-text" x="62" y="247">safe sample keys / placeholders</text>
+            <path class="edge-runtime-optional" d="M166 194 V173"/>
+            <rect class="node-main" x="366" y="96" width="252" height="94" rx="10"/>
+            <text class="svg-title" x="384" y="125">config/*.php</text><text class="svg-text" x="384" y="149">env() values become named settings</text><text class="svg-small" x="384" y="171">runtime code reads config(...)</text>
+            <path class="edge-runtime" d="M289 119 H360"/>
+            <rect class="node-main" x="704" y="96" width="250" height="94" rx="10"/>
+            <text class="svg-title" x="722" y="125">bootstrap/app.php</text><text class="svg-text" x="722" y="149">load route files, middleware, errors</text><text class="svg-small" x="722" y="171">health and broadcast routes too</text>
+            <path class="edge-runtime" d="M618 143 H698"/>
+            <rect class="node" x="990" y="96" width="132" height="94" rx="10"/>
+            <text class="svg-title" x="1008" y="125">Runtime</text><text class="svg-text" x="1008" y="149">API + services</text><text class="svg-small" x="1008" y="171">use config</text>
+            <path class="edge-runtime" d="M954 143 H984"/>
+            <rect class="node" x="704" y="228" width="250" height="88" rx="10"/>
+            <text class="svg-title" x="722" y="257">routes/*.php</text><text class="svg-text" x="722" y="281">API URLs / verbs / middleware</text><text class="svg-small" x="722" y="301">loaded by bootstrap; not config values</text>
+            <path class="edge-runtime" d="M829 190 V222"/>
+            <rect class="node" x="366" y="228" width="252" height="88" rx="10"/>
+            <text class="svg-title" x="384" y="257">Composer files</text><text class="svg-text" x="384" y="281">composer.json + composer.lock</text><text class="svg-small" x="384" y="301">declare packages / pin exact versions</text>
+            <rect class="node" x="44" y="344" width="245" height="88" rx="10"/>
+            <text class="svg-title" x="62" y="373">vendor/</text><text class="svg-text" x="62" y="397">installed PHP packages + autoloader</text><text class="svg-small" x="62" y="417">generated by composer install</text>
+            <path class="edge-runtime" d="M492 316 V362 H295"/>
+            <rect class="node-db" x="366" y="344" width="252" height="88" rx="10"/>
+            <text class="svg-title" x="384" y="373">database/migrations</text><text class="svg-text" x="384" y="397">versioned tables, keys, indexes</text><text class="svg-small" x="384" y="417">seeders/factories create data</text>
+            <rect class="node-db" x="704" y="344" width="250" height="88" rx="10"/>
+            <text class="svg-title" x="722" y="373">Selected DB connection</text><text class="svg-text" x="722" y="397">e.g. ResQ local / shared / bridge</text><text class="svg-small" x="722" y="417">credentials + host from config/env</text>
+            <path class="edge-runtime" d="M618 388 H698"/>
+            <rect class="node-db" x="990" y="344" width="132" height="88" rx="10"/>
+            <text class="svg-title" x="1008" y="373">Database</text><text class="svg-text" x="1008" y="397">tables / rows</text><text class="svg-small" x="1008" y="417">records</text>
+            <path class="edge-runtime" d="M954 388 H984"/>
+            <path class="edge-runtime-data" d="M1056 190 V338"/>
+            <rect class="node" x="366" y="468" width="252" height="88" rx="10"/>
+            <text class="svg-title" x="384" y="497">storage/</text><text class="svg-text" x="384" y="521">logs, cache, generated/private files</text><text class="svg-small" x="384" y="541">runtime files; permissions/backups matter</text>
+            <rect class="node" x="704" y="468" width="250" height="88" rx="10"/>
+            <text class="svg-title" x="722" y="497">Cache / queue / session</text><text class="svg-text" x="722" y="521">drivers selected in config</text><text class="svg-small" x="722" y="541">file, database, Redis, sync, etc.</text>
+            <path class="edge-runtime" d="M829 190 V462"/>
+            <text class="svg-small" x="46" y="477">The files are complementary:</text><text class="svg-small" x="46" y="499">source and manifests describe;</text><text class="svg-small" x="46" y="521">bootstrap loads; runtime connects;</text><text class="svg-small" x="46" y="543">DB and storage retain different data.</text>
+          </svg>
+        </div>
+        <h4>How to explain the “backend words” without mixing them up</h4>
+        <ul>
+          <li><b>Environment:</b> <code>.env</code> holds machine-specific values such as selected DB connection, host, user, password, API keys, debug mode, queue/cache/session driver and service URLs. <code>.env.example</code> is a starter template, not the live environment and not proof a service is connected. Copy it to a private <code>.env</code>, set safe values, and never commit real secrets. Keep <code>APP_DEBUG=false</code> in production. Do not expose server credentials in a mobile/web build.</li>
+          <li><b>Configuration:</b> files under <code>config/</code> group environment values and defaults. Example: <code>config/database.php</code> reads <code>DB_CONNECTION</code> to choose a named connection and reads the matching connection settings. Feature/runtime code should normally query Laravel's <code>config(...)</code>, not read environment variables throughout the app. A cached configuration snapshot can be built for deployment; clear/rebuild it after changing deployment settings so the running app sees the intended values.</li>
+          <li><b>This project's DB selection:</b> the example sets <code>DB_CONNECTION=resq_local</code>. <code>config/database.php</code> maps that alias to the local operational DB values. It also declares other connections (including shared ResQ and TrackingAid); a connection definition alone does not mean the database is reachable or actively used. The shown household API uses the default connection via Laravel DB/query-builder calls. Actual deployment values and grants must be checked privately.</li>
+          <li><b>Database vocabulary:</b> a database server (for example MySQL) hosts one or more databases; a database contains tables; a table has columns and rows. A primary key uniquely identifies a row; a foreign key links related rows; an index speeds selected lookups; a migration changes the schema (structure); a seeder inserts initial/reference data; a transaction groups writes so commit saves all or rollback undoes all. <code>database/migrations</code> contains schema instructions—not the live operational records.</li>
+          <li><b>Routes:</b> <code>routes/api.php</code> describes HTTP method + URL + controller + middleware. Laravel loads it through <code>bootstrap/app.php</code>; its <code>v1</code> prefix is part of the client URL. A route is not a database table or service class.</li>
+          <li><b>Storage:</b> <code>storage/</code> is runtime space for logs, framework cache, sessions/files and generated artifacts depending on the configured driver. Treat private uploads and generated reports as protected data, ensure write permissions/retention/backups, and do not confuse the <code>storage/</code> directory with a database.</li>
+          <li><b>Vendor:</b> <code>composer.json</code> declares allowed dependency ranges, <code>composer.lock</code> records exact resolved versions, and <code>composer install</code> installs them under <code>vendor/</code> plus the Composer autoloader. Do not hand-edit <code>vendor/</code>; change the manifest through Composer and deploy the lock-consistent install.</li>
+          <li><b>Runtime companions:</b> queue jobs execute only when the selected queue driver/worker is configured; scheduled commands execute only when the scheduler runs; cache and sessions use their configured drivers. The example environment defaults several paths to local/synchronous development behavior, while deployment may intentionally differ.</li>
+        </ul>
+        <p>Source links: <a href="../../../../resqperation-system/backend-laravel/bootstrap/app.php">application bootstrap</a>, <a href="../../../../resqperation-system/backend-laravel/routes/api.php">API routes</a>, <a href="../../../../resqperation-system/backend-laravel/routes/console.php">scheduler definitions</a>, <a href="../../../../resqperation-system/backend-laravel/config/database.php">database connection definitions</a>, <a href="../../../../resqperation-system/backend-laravel/config/queue.php">queue configuration</a>, <a href="../../../../resqperation-system/backend-laravel/config/filesystems.php">filesystem configuration</a>, <a href="../../../../resqperation-system/backend-laravel/.env.example">safe environment template</a>, <a href="../../../../resqperation-system/backend-laravel/composer.json">Composer dependency manifest</a>, <a href="../../../../resqperation-system/backend-laravel/app/Providers/AppServiceProvider.php">application service provider</a>.</p>
+      </section>
+      <h3>Illustrative HTTP example (shape is educational; never use a real token in notes)</h3>
+      <pre class="diagram">POST /api/v1/household/members/MEMBER_ID/status
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer &lt;token returned by login&gt;
+
+{
+  "status_key": "safe",
+  "latitude": 10.2922,
+  "longitude": 123.8763,
+  "location_accuracy_m": 12,
+  "notes": "At home"
+}
+
+201 Created
+{
+  "message": "Family member status saved.",
+  "data": { "status_log_id": 123, "member_status": { "status_key": "safe" } }
+}</pre>
+      <p>The real response includes additional identifiers, labels and timestamps. The server does not trust a submitted status merely because it came from the app: it checks caller household, member membership, active event, allowed status, field types/ranges and database readiness. The transaction ensures the history and current state do not become inconsistent if one write fails.</p>
+      <h3>How to trace another module during a coding test</h3>
+      <ol><li>Find the screen in <code>frontend-web/src/pages</code> or mobile <code>app/</code>/<code>components/</code>.</li><li>Find its API call in that platform's <code>api/</code> folder.</li><li>Search the exact URL/method in Laravel <code>routes/api.php</code>; record middleware and role.</li><li>Open the controller action; follow the service/workflow call rather than assuming business logic is in the controller.</li><li>Follow its Query/Action/Model/Writer and migrations to identify tables and writes.</li><li>Follow the presenter/resource to the JSON response and the UI's success/error handling.</li><li>Find focused tests under backend <code>tests/</code> and client <code>tests/</code>.</li></ol>
+    </section>
+
+    <section id="stack">
+      <h2>3. Technology stacks: what is used and why</h2>
+      <table>
+        <thead><tr><th>Area</th><th>Repository-backed stack</th><th>Role in the system</th></tr></thead>
+        <tbody>
+          <tr><td>Backend</td><td>PHP 8.3; Laravel 13.8; Sanctum; Laravel Reverb package; Predis; Composer.</td><td>JSON API, authentication, business workflows, persistence, jobs and (when enabled/configured) realtime delivery.</td></tr>
+          <tr><td>Web</td><td>React 19; Vite 8; React Router; Axios; Redux Toolkit; Leaflet / React-Leaflet; Chart.js; plain CSS.</td><td>Browser-based operations interface, state management, API calls, charts and interactive maps.</td></tr>
+          <tr><td>Mobile</td><td>Expo SDK 54; React Native 0.81; TypeScript 5.9; Expo Router; SQLite; Expo Location; MapLibre and Leaflet-based web views; OneSignal SDK.</td><td>Android/iOS/web application shell and household/responder field features.</td></tr>
+          <tr><td>Data</td><td>MySQL-backed operational records; database settings are environment-specific.</td><td>Durable records for users, operational activity, requests, reports and related entities.</td></tr>
+          <tr><td>Operations / infrastructure</td><td>Docker Compose services include API runtime, MySQL, Redis, queue worker, scheduler and Nginx; navigation profile includes Valhalla and TileServer-GL.</td><td>Local or server orchestration; optional profiles and environment settings control what actually runs.</td></tr>
+        </tbody>
+      </table>
+      <p>Dependency evidence: <a href="../../../../resqperation-system/backend-laravel/composer.json">Backend Composer manifest</a>, <a href="../../../../resqperation-system/frontend-web/package.json">Web package manifest</a>, <a href="../../../../resqperation-system/frontend-mobile/package.json">Mobile package manifest</a>, <a href="../../../../resqperation-system/docker-compose.yml">Docker Compose file</a>. A dependency being listed means it is available to the project, not that every feature uses it in every environment.</p>
+    </section>
+
+    <section id="roles">
+      <h2>4. Fixed user roles and access model</h2>
+      <p>The fixed account catalog contains <b>nine assigned roles</b>. The exact keys and labels are:</p>
+      <table>
+        <thead><tr><th scope="col">Role key stored/checked by backend</th><th scope="col">Canonical role label</th><th scope="col">Base-role detail</th></tr></thead>
+        <tbody>
+          <tr><td><code>operations_admin</code></td><td>Operations/Admin</td><td>Headquarters operational administration and personnel access.</td></tr>
+          <tr><td><code>chair</code></td><td>BDRRM Committee Chairperson</td><td>Committee chair; role record key is <code>chair</code>.</td></tr>
+          <tr><td><code>mitigation_prevention</code></td><td>Mitigation and Prevention Sub-committee</td><td>Committee role.</td></tr>
+          <tr><td><code>preparedness</code></td><td>Preparedness Sub-committee</td><td>Committee role.</td></tr>
+          <tr><td><code>response</code></td><td>Response Sub-committee</td><td>Committee role.</td></tr>
+          <tr><td><code>recovery_rehabilitation</code></td><td>Recovery and Rehabilitation Sub-committee</td><td>Committee role.</td></tr>
+          <tr><td><code>tl</code></td><td>Team Leader</td><td>Assigned role is <code>tl</code>; base role is <code>rescuer</code>.</td></tr>
+          <tr><td><code>tm</code></td><td>Team Member</td><td>Assigned role is <code>tm</code>; base role is <code>rescuer</code>.</td></tr>
+          <tr><td><code>household_resident</code></td><td>Household Resident</td><td>Household mobile account; household-owner/device middleware can further restrict access.</td></tr>
+        </tbody>
+      </table>
+      <p>A public visitor or an external integration is <b>not</b> one of these nine account roles; public/partner routes have separate route-level controls.</p>
+      <p><b>How to read the checklists:</b> a check means the current backend route middleware/policy authorizes that role for the named capability. A dash means the role is not authorized by that role/module rule. It does not guarantee a feature is deployed or operational, and a particular record can still be constrained by event, team, assignment, household ownership, device binding, validation, or active status. Where a capability spans a family of actions, the table names the exact included actions.</p>
+      <h3>Role capability checklist: who can do what?</h3>
+      <div style="overflow-x:auto" role="region" aria-label="Scrollable role capability checklist" tabindex="0">
+      <table class="role-matrix">
+        <thead><tr><th scope="col">Backend capability / what the check means</th><th scope="col">Operations / Admin<br><code>operations_admin</code></th><th scope="col">Chairperson<br><code>chair</code></th><th scope="col">Mitigation &amp; Prevention<br><code>mitigation_prevention</code></th><th scope="col">Preparedness<br><code>preparedness</code></th><th scope="col">Response<br><code>response</code></th><th scope="col">Recovery &amp; Rehabilitation<br><code>recovery_rehabilitation</code></th><th scope="col">Team Leader<br><code>tl</code></th><th scope="col">Team Member<br><code>tm</code></th><th scope="col">Household Resident<br><code>household_resident</code></th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Manage personnel: accounts, responder/team configuration and role catalog (personnel-access permission)</th><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Manage public inquiries and access inquiry archive</th><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Access the protected realtime health/diagnostic endpoint</th><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">View dashboard and operational summaries</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">View geospatial workspace, map/household data and operational layers</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Create/delete hazard map layers (explicit manage_hazards action)</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Create/register a disaster event (POST event action is checked as publish_alert)</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Update a disaster event or close the active event (response-operations module access)</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Publish a disaster broadcast for an event (POST broadcast action)</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Create/delete disaster-type and household-status-type catalog entries (response-operations module)</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Create a rescue dispatch / assignment (POST dispatch action)</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Update dispatch details (web response-operations module)</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Complete/approve a dispatch through the web complete action (policy marks it approve)</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Submit a web resource request (create request; not approval)</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Manage web resource-request type/catalog entries (resource-requests module)</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Validate/approve, forward, return or complete a web resource request</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Submit a field resource request from the rescuer mobile app (TL-only route)</th><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Cancel a field resource request through the rescuer mobile request workflow</th><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Access reports/documentation and submit situation reports (route/module family)</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Use rescuer mobile assignments, navigation, offline trip sync and radio workflows (assignment-scoped)</th><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Submit a rescuer mobile field report</th><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Submit an assigned household-status log from a field/rescuer role</th><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td></tr>
+          <tr><th scope="row">Use household mobile app: setup/profile, trusted household, own member statuses and history</th><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td></tr>
+          <tr><th scope="row">Confirm a household status from web response operations (not the same as resident self-report)</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+        </tbody>
+      </table></div>
+      <p class="small">Checkmarks are based on the current route middleware and <code>WebAccessPolicy</code>, not on UI menu visibility. The action names distinguish similar-looking powers: creating a request is not approving it; creating a dispatch is not completing it; a resident self-report is not the HQ confirmation action.</p>
+      <p class="small"><b>Common account actions:</b> the authenticated route group also exposes shared account operations such as identity lookup, logout, and security-question handling. These are not operational role powers and are omitted from the matrices. Sensitive record actions remain separately role- and ownership-checked.</p>
+      <h3>Web module checklist (module access is not permission for every action)</h3>
+      <div style="overflow-x:auto" role="region" aria-label="Scrollable web module checklist" tabindex="0">
+      <table class="role-matrix">
+        <thead><tr><th scope="col">Web module</th><th scope="col">Operations / Admin<br><code>operations_admin</code></th><th scope="col">Chairperson<br><code>chair</code></th><th scope="col">Mitigation &amp; Prevention<br><code>mitigation_prevention</code></th><th scope="col">Preparedness<br><code>preparedness</code></th><th scope="col">Response<br><code>response</code></th><th scope="col">Recovery &amp; Rehabilitation<br><code>recovery_rehabilitation</code></th><th scope="col">Team Leader<br><code>tl</code></th><th scope="col">Team Member<br><code>tm</code></th><th scope="col">Household Resident<br><code>household_resident</code></th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Dashboard</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Geospatial analytics</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Response operations</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Resource requests</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Reports and documentation</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Personnel access</th><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Profile and notifications</th><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+          <tr><th scope="row">Inquiries</th><td class="allowed" aria-label="Allowed">✓</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td><td class="denied">—</td></tr>
+        </tbody>
+      </table></div>
+      <div class="caution"><b>Important implementation detail:</b> the fixed Operations/Admin role is included in every web module in <code>WebAccessPolicy::MODULES</code>. The backend policy returns true for its module actions, so Operations/Admin can access the dashboard, mapping, response operations, resource requests, reports, personnel access, profile, notifications, and inquiries, including actions such as request approval, hazard-layer management, broadcast publication, and dispatch creation/completion when those routes use this policy. The role table excludes mobile-only Team Leader/Team Member and Household Resident workflows; separate route, account-active, record-ownership, event, team, assignment, and validation rules still apply. The frontend navigation reflects the broad web access, but server authorization remains authoritative.</div>
+      <div class="note"><b>Navigation is not authorization:</b> the frontend's <code>canOpenWebPage</code> and module list hide/show pages, but protected API routes also check server-side access. For the real permission answer, use middleware and policy as evidence. Role DB settings may narrow a committee role's modules but cannot grant a module outside that role's fixed backend allowlist.</div>
+      <div class="caution"><b>Legacy role aliases:</b> migration maps older values such as <code>super_admin</code>/<code>admin</code> to Operations/Admin, <code>hq_admin</code>/<code>pb</code> to Chair, leadership aliases to Response, <code>pao</code> to Mitigation &amp; Prevention, and legacy <code>rescuer</code> to Team Member. Team Leader/Member can have a base role of rescuer while the assigned role key remains <code>tl</code>/<code>tm</code>. Do not confuse base role with the assigned fixed role.</div>
+      <p>Inspect the <a href="../../../../resqperation-system/backend-laravel/database/migrations/2026_10_20_000001_apply_proposed_access_roles.php">fixed role catalog and legacy mapping</a>, <a href="../../../../resqperation-system/backend-laravel/app/Services/Web/WebAccessPolicy.php">web module/action allowlists</a>, <a href="../../../../resqperation-system/backend-laravel/app/Http/Middleware/EnsureUserHasRole.php">role middleware</a>, <a href="../../../../resqperation-system/backend-laravel/app/Http/Middleware/EnsureWebModuleAccess.php">server-side module middleware</a>, <a href="../../../../resqperation-system/frontend-web/src/utils/personnelAccess.js">frontend navigation gate</a>, and route middleware in <a href="../../../../resqperation-system/backend-laravel/routes/api.php">the API route file</a>.</p>
+    </section>
+
+    <section id="partners">
+      <h2>5. External subsystems: SafeTrack, EvaTrack and TrackingAid</h2>
+      <p>These are separate systems with their own data ownership. RESQPERATION should exchange only the operational information required for a workflow. An integration design, a configured URL/key, or a shared database setting does not prove that the partner is reachable or has accepted the exchange.</p>
+      <table>
+        <thead><tr><th>Subsystem</th><th>How the project connects / intended purpose</th><th>Evidence status</th><th>What the proponents should say</th></tr></thead>
+        <tbody>
+          <tr><td>SafeTrack</td><td>Backend makes authenticated HTTP requests to SafeTrack household/member/sitio endpoints; it can paginate data, check changes, save a local JSON snapshot, and transactionally synchronize validated household/member records into the operational database. It also generates report files from SafeTrack data.</td><td><span class="tag yes">Connector code present</span> Requires configured <code>SAFETRACK_API_URL</code>, <code>SAFETRACK_API_KEY</code>, API prefix, reachable SafeTrack service and matching response shape. A sync route explicitly reports a 503 if unavailable; actual deployment connectivity still needs verification.</td><td>“SafeTrack is the upstream household/census source. RESQPERATION fetches and validates its data, keeps a saved snapshot, and syncs allowed household/member fields locally. We must show the sync timestamp and a live test before claiming the connection is currently up.”</td></tr>
+          <tr><td>EvaTrack</td><td>There are two distinct surfaces: report generation sends an authenticated JSON request to EvaTrack's <code>/api/v1/external/reports/generate</code>; external report-request/handshake routes support controlled report exchange. Resource request intake/validation is another workflow, not interchangeable with report generation.</td><td><span class="tag config">Client code present; live exchange unverified</span> Needs the backend report URL/key or partner intake configuration, network access and end-to-end response/acceptance checks.</td><td>“EvaTrack's client validates report type/date/format, sends an API-key-authenticated request, checks the upstream response, and returns a download reference. We must distinguish a generated report from a partner accepting a resource request.”</td></tr>
+          <tr><td>TrackingAid</td><td>Two separate integration types exist: validated resource requests are forwarded through a configured database bridge table with tracking reference and outbox retry; a report client can request partner report generation through configured HTTP API settings.</td><td><span class="tag config">Code present; live bridge depends on setup</span> DB bridge requires reachable credentials/table/grants and workers; report API requires URL/key and partner reachability. Neither proves stock fulfillment or acceptance.</td><td>“The database bridge records a handoff, and the report API returns a report artifact. These are not proof of direct stock-control ownership; TrackingAid remains responsible for its own inventory/fulfillment state.”</td></tr>
+        </tbody>
+      </table>
+      <h3>End-to-end integration checklist</h3>
+      <ol><li>Identify the record and system of record (who owns the authoritative value).</li><li>Show the route/client/payload mapping and which fields are transmitted.</li><li>Confirm the auth mechanism and configure secrets only on the backend, never in the mobile bundle.</li><li>Confirm network access, database permissions or API reachability in the actual deployment.</li><li>Run a test exchange and capture correlation/tracking ID, timestamp, response and error behavior.</li><li>Get partner-side confirmation that the record was received and acted on.</li><li>Test retry/idempotency and explain how duplicate submissions are prevented.</li></ol>
+      <p>Useful source references: <a href="../../../../resqperation-system/backend-laravel/app/Services/Shared/SafeTrackReportClient.php">SafeTrack API/report client</a>, <a href="../../../../resqperation-system/backend-laravel/app/Services/Shared/SafeTrackHouseholdSync.php">SafeTrack-to-local household synchronization</a>, <a href="../../../../resqperation-system/backend-laravel/app/Services/Shared/SafeTrackHouseholdDirectory.php">saved directory snapshot</a>, <a href="../../../../resqperation-system/backend-laravel/app/Http/Controllers/Api/HouseholdDirectoryController.php">sync endpoint handler</a>, <a href="../../../../resqperation-system/backend-laravel/config/safetrack.php">SafeTrack settings</a>, <a href="../../../../resqperation-system/backend-laravel/app/Services/Shared/TrackingAidForwardingService.php">TrackingAid forwarding service</a>, <a href="../../../../resqperation-system/backend-laravel/app/Jobs/SyncTrackingAidRequest.php">TrackingAid queued sync job</a>, <a href="../../../../resqperation-system/backend-laravel/app/Services/Shared/EvaTrackReportClient.php">EvaTrack report client</a>, <a href="../../../../resqperation-system/backend-laravel/app/Http/Controllers/Api/EvaTrackReportController.php">partner report controller</a>, <a href="../../../../resqperation-system/docs/RESQPERATION_USE_CASE_COVERAGE.md">coverage and integration caveats</a>.</p>
+    </section>
+
+    <section id="maps">
+      <h2>6. Mapping: base maps, boundary, overlays and routing</h2>
+      <p>The map is a combination of a <b>base layer</b> (street or imagery tiles), application overlays (households, evacuation centers, incidents, routes, hazards and dispatch markers), and configured geometry. Those are different things and can have different sources and accuracy.</p>
+      <table>
+        <thead><tr><th>Map resource</th><th>Use in the project</th><th>Source / limitation</th></tr></thead>
+        <tbody>
+          <tr><td>OpenStreetMap street tiles</td><td>Street/road basemap for web/mobile map views; also provides source data for the offline Mambaling map recipe.</td><td><a href="https://www.openstreetmap.org/">OpenStreetMap</a> · <a href="https://www.openstreetmap.org/copyright">attribution and license</a> · public tile policy: <a href="https://operations.osmfoundation.org/policies/tiles/">OSM tile usage policy</a>. Network and policy limits apply; do not treat public tiles as an unlimited production tile service.</td></tr>
+          <tr><td>Esri World Imagery</td><td>Satellite imagery basemap option in web/mobile map code.</td><td><a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9">World Imagery item</a> · <a href="https://www.esri.com/en-us/legal/terms/full-master-agreement">Esri terms</a>. Availability, attribution and usage terms must be respected.</td></tr>
+          <tr><td>Offline Mambaling vector tiles</td><td>Self-hosted map package can serve offline/local vector map data when TileServer-GL and the matching MBTiles/style assets are installed.</td><td>Recipe downloads Philippines OSM extract from <a href="https://download.geofabrik.de/asia/philippines.html">Geofabrik</a>; project recipe/config: <a href="../../../../resqperation-system/deploy/tiles/">tile deployment files</a>. It is an optional deployment profile, not automatically available just because the recipe exists.</td></tr>
+          <tr><td>Barangay map extent / boundary</td><td>Limits the map view and/or draws a locally supplied boundary overlay.</td><td><a href="../../../../resqperation-system/backend-laravel/config/map_layers.php">map layer config</a>, <a href="../../../../resqperation-system/frontend-mobile/assets/mambaling-boundary.json">mobile Mambaling boundary asset</a>, <a href="../../../../resqperation-system/backend-laravel/.env.example">sample geographic settings</a>. Configured numeric bounds are a rectangular extent; they are not automatically an official surveyed barangay polygon. The web UI itself warns when a polygon is only indicative or not verified.</td></tr>
+          <tr><td>Hazard assessment overlay</td><td>GeoJSON-style flood/liquefaction or other assessment layer used for planning.</td><td><a href="https://hazardhunter.georisk.gov.ph/">GeoRiskPH HazardHunterPH</a> is a reference/source, not proof that its live data is automatically imported or that a local hazard polygon is officially certified. Local reviewer/source/date should accompany any authored overlay.</td></tr>
+          <tr><td>Geocoding</td><td>Converts coordinates to a human-readable place label (reverse geocoding).</td><td>Mobile code tries device/platform location services and then <a href="https://nominatim.org/release-docs/latest/api/Reverse/">OSM Nominatim reverse API</a>. Rate limits, attribution and privacy apply.</td></tr>
+          <tr><td>Road routing</td><td>Computes a route line and ETA from road-network data.</td><td>Project has an OSRM endpoint setting (<a href="https://project-osrm.org/docs/v5.24.0/api/">OSRM API docs</a>) and an optional Valhalla service (<a href="https://valhalla.github.io/valhalla/">Valhalla docs</a>) with driving/pedestrian profiles. The public OSRM demo is not an SLA-backed production service.</td></tr>
+        </tbody>
+      </table>
+      <h3>What appears as map overlays?</h3>
+      <p>Depending on account, selected event and available data: household status/location, evacuation locations, dispatch/team markers, incident/report points, route geometries and assessed hazard polygons. A layer being present in a map component does not mean every point is current or independently field-verified. GPS freshness, source timestamp and map attribution must be shown or explained.</p>
+      <h3>Mapping files to inspect</h3>
+      <ul>
+        <li><a href="../../../../resqperation-system/backend-laravel/config/map_layers.php">Backend map layer catalog and tile URL templates</a></li>
+        <li><a href="../../../../resqperation-system/frontend-web/src/pages/MappingPage.jsx">Web mapping page</a>; <a href="../../../../resqperation-system/frontend-web/src/components/mapping/MappingMap.jsx">map component and boundary behavior</a></li>
+        <li><a href="../../../../resqperation-system/frontend-mobile/utils/mobileLeafletHtml.ts">Mobile Leaflet layer source</a>; <a href="../../../../resqperation-system/frontend-mobile/utils/geocoding.ts">mobile geocoding</a></li>
+        <li><a href="../../../../resqperation-system/backend-laravel/config/navigation.php">Navigation provider/profile configuration</a>; <a href="../../../../resqperation-system/deploy/tiles/config.json">TileServer-GL bounds and zoom metadata</a>; <a href="../../../../resqperation-system/deploy/tiles/mambaling.json">Mambaling dataset metadata</a></li>
+      </ul>
+      <div class="caution"><b>Boundary accuracy:</b> map bounds, a generated map extract, a project JSON file and a legally authoritative administrative boundary are not interchangeable. Before defense, ask who supplied the polygon, what coordinate reference system it uses, when it was checked, and whether the barangay/city authority approved it. Do not call an approximate rectangle an official boundary.</div>
+    </section>
+
+    <section id="weather">
+      <h2>7. Weather and official hazard advisories</h2>
+      <table>
+        <thead><tr><th>Source</th><th>How it is used</th><th>Source link and operational note</th></tr></thead>
+        <tbody>
+          <tr><td>Open-Meteo</td><td>Automatic forecast snapshot data fetched by the backend and presented to operational screens/reports.</td><td><a href="https://open-meteo.com/en/docs">API documentation</a> · <a href="https://open-meteo.com/en/pricing">terms / licensing</a>. Confirm the selected variables, request coordinates, attribution and refresh schedule from the deployed config.</td></tr>
+          <tr><td>PAGASA</td><td>Official weather warnings/advisories; code includes a Ten-Day API integration whose token/location may be configured.</td><td><a href="https://bagong.pagasa.dost.gov.ph/">PAGASA official site</a> · <a href="https://tenday.pagasa.dost.gov.ph/">Ten-Day forecast portal</a>. A token placeholder in the example environment is not a live token.</td></tr>
+          <tr><td>PHIVOLCS</td><td>Code synchronizes official earthquake bulletins/advisory information for operational notifications.</td><td><a href="https://www.phivolcs.dost.gov.ph/">PHIVOLCS official site</a>. Confirm the fetch schedule, source timestamps and live-delivery status in deployment logs.</td></tr>
+        </tbody>
+      </table>
+      <p>Weather code references: <a href="../../../../resqperation-system/backend-laravel/app/Services/Shared/WeatherSnapshotService.php">weather snapshot service</a>, <a href="../../../../resqperation-system/backend-laravel/app/Services/Shared/OfficialAdvisoryNotificationSync.php">official advisory synchronization</a>, <a href="../../../../resqperation-system/frontend-web/src/api/weatherApi.js">web weather API helper</a>, <a href="../../../../resqperation-system/frontend-web/src/components/weather/OfficialWeatherOutlook.jsx">weather display</a>.</p>
+      <div class="note"><b>Explain the distinction:</b> a forecast is model output, while a warning/advisory is an official notice. Show source and time of retrieval; never present a forecast as an official evacuation order.</div>
+    </section>
+
+    <section id="communications">
+      <h2>8. Communication channels: OneSignal, browser push, SMS, PTT and realtime</h2>
+      <table>
+        <thead><tr><th>Channel</th><th>How it works in this codebase</th><th>What it does not guarantee</th></tr></thead>
+        <tbody>
+          <tr><td>OneSignal mobile push</td><td>Mobile SDK registers the device with OneSignal; backend notification/broadcast jobs call the provider for push delivery. <a href="https://documentation.onesignal.com/docs/mobile-sdk-setup">OneSignal mobile setup</a>.</td><td>Provider acceptance is not proof the phone displayed the alert. Requires app/project configuration, network, OS permission and provider delivery services (e.g. Android push credentials). Check device registration, queue state and delivery reports.</td></tr>
+          <tr><td>Browser Web Push</td><td>Separate browser subscription/key and delivery path exists for supported web clients. See the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Push_API">Web Push API</a>.</td><td>It is not the same as OneSignal mobile push; browser permission, supported browser, service worker, VAPID keys and server configuration are needed. Dependency/routes do not prove live delivery.</td></tr>
+          <tr><td>SMS via Android SMS Gateway</td><td>Backend can call an <a href="https://sms-gate.app/">Android SMS Gateway</a> HTTP API (<a href="https://docs.sms-gate.app/">gateway documentation</a>) in batches; it handles configuration and gateway acceptance/error responses. An inbound SMS endpoint also exists.</td><td>Gateway acceptance is not proof that a carrier delivered the SMS. Needs a paired/configured gateway device, network, credentials, recipient numbers, balance/service and delivery/receipt handling. Do not publish gateway credentials.</td></tr>
+          <tr><td>Internet PTT / radio feed</td><td>Rescuer mobile app records voice clips and uploads them to the API; the feed polls about every four seconds for new items.</td><td>This is not a hardware two-way radio, not guaranteed realtime/continuous full-duplex audio, and not available without connectivity. Do not promise offline radio operation.</td></tr>
+          <tr><td>Realtime dashboard updates</td><td>Laravel Reverb / Laravel Echo / Pusher-compatible packages and durable event/outbox code are available.</td><td>Realtime publishing is controlled by deployment settings; source config defaults the durable realtime outbox off. A package being installed does not prove a Reverb server is running.</td></tr>
+        </tbody>
+      </table>
+      <h3>Typical alert path</h3>
+      <ol><li>Authorized user creates/updates an official broadcast.</li><li>Backend validates the event, audience and message.</li><li>Backend records the broadcast and queues provider delivery work.</li><li>Queue worker calls OneSignal and/or the SMS gateway for configured audiences.</li><li>Provider response and local job state are recorded; delivery must be separately confirmed where supported.</li><li>Client receives/displays the alert if device, network, OS permission and provider conditions are met.</li></ol>
+      <p>Source and setup links: <a href="../../../../resqperation-system/backend-laravel/app/Services/OneSignalNotificationService.php">OneSignal service</a>, <a href="../../../../resqperation-system/backend-laravel/ANDROID-PUSH.md">Android push setup/verification notes</a>, <a href="../../../../resqperation-system/backend-laravel/app/Services/Shared/SmsGatewayService.php">SMS gateway service</a>, <a href="../../../../resqperation-system/backend-laravel/app/Http/Controllers/Api/SmsInboundController.php">inbound SMS controller</a>, <a href="../../../../resqperation-system/frontend-mobile/components/rescuer/RadioCommunicationScreen.tsx">mobile radio screen</a>, <a href="../../../../resqperation-system/backend-laravel/config/realtime.php">realtime configuration</a>.</p>
+    </section>
+
+    <section id="network-state">
+      <h2>10A. Network, login tokens, cookies, state, offline mode and data indexing</h2>
+      <h3>Network route: client to Laravel to the database</h3>
+      <div class="diagram"><b>Web browser or native phone</b><br>
+  ├─ DNS / IP / port / Wi-Fi, LAN, Tailscale or public HTTPS route<br>
+  ├─ HTTPS in deployed public use (private/local development can use HTTP)<br>
+  ├─ Web CORS origin check / API host and request-header guard<br>
+  ├─ API edge limit and Laravel API middleware<br>
+  ├─ route-level authentication / role / device / module policy<br>
+  ├─ controller → workflow → database/provider client<br>
+  └─ JSON status + headers → client updates UI or displays explicit failure<br><br>
+<b>Never:</b> browser/mobile app → direct MySQL connection. DB usernames/passwords stay on the backend.</div>
+      <p><b>Web:</b> the shared Axios client chooses the API URL from <code>VITE_API_BASE_URL</code> and browser host. Local Vite development proxies <code>/api</code> and <code>/storage</code> to Laravel at <code>127.0.0.1:8000</code>; a non-local browser can use same-origin <code>/api/v1</code>. Vite is a development server/proxy, not the application backend.</p>
+      <p><b>Mobile:</b> the client can use a configured API URL plus fallback URLs. It probes <code>/api/v1/health/ready</code> (4-second probe timeout, readiness cached for about 60 seconds) and selects a ready server. Android release candidates are prioritized as Ngrok HTTPS, private Wi-Fi IPv4, then Tailscale. Network failure can trigger another route for safe reads and login; ordinary writes are deliberately not blindly replayed against a second server because that could duplicate an operation. The API client checks the selected origin, adds a device UUID for bound rescuer requests, and uses a 20-second request timeout.</p>
+      <p><b>CORS:</b> Cross-Origin Resource Sharing lets the backend allow known browser origins and request headers. The project's CORS config sets <code>supports_credentials</code> false, while the web Axios client does not use a cookie-based login flow. CORS is not authentication; the server must still authenticate and authorize the request.</p>
+      <p><b>Connections and failures:</b> DNS resolves a hostname to an address; a port identifies a service; a tunnel/LAN/Tailscale route provides reachability; Laravel's readiness check distinguishes an API process from a healthy API-plus-database connection. HTTP 401 means authentication is absent/invalid, 403 means authenticated but disallowed, 404 means not found, 409 means state conflict, 422 means invalid input, 429 means throttled, and 5xx means server/dependency failure. The project can attach an <code>X-Request-ID</code> to help connect an API error to server logs.</p>
+      <h3>What “session”, “token” and “cookie” mean here</h3>
+      <ul>
+        <li><b>API authentication used by clients:</b> login calls Laravel; backend verifies the account/password and issues a Sanctum personal access token. Client stores that token and the Axios interceptor sends an <code>Authorization: Bearer …</code> header. Each protected request is authenticated against that token. Logout calls the backend to delete/revoke the current token, then clears the local copy.</li>
+        <li><b>Web token storage:</b> token is stored in browser <code>localStorage</code>, which is browser key/value storage, not a cookie. JavaScript can read it, so frontend injection/XSS is a security concern; never store the backend secret key there.</li>
+        <li><b>Mobile token storage:</b> native builds use Expo SecureStore (OS-backed secure storage); the mobile web build uses its web fallback, localStorage. Native and browser guarantees are different.</li>
+        <li><b>Laravel session cookie:</b> Laravel still has generic session configuration (example environment says <code>SESSION_DRIVER=file</code> and a 120-minute lifetime), but the main React/mobile API requests use bearer tokens, not Laravel's session cookie. Do not describe the API login as cookie-session authentication without verifying a different client path.</li>
+        <li><b>Sanctum stateful SPA:</b> Sanctum can also support cookie/CSRF authentication for first-party SPAs. That is a different mode, requiring CSRF-cookie request, session cookie, credentialed CORS and CSRF handling. The current web API client uses the token path and the CORS config disables credentials.</li>
+        <li><b>Redux “session”:</b> this is the current in-memory account/cache scope, not the server's Laravel session. The client clears cached data on token/account/server change and on 401 logout/session expiration.</li>
+        <li><b>Remembered login:</b> web stores the remembered account ID; if supported and permitted by browser security, the browser credential vault can handle the password. Native may store remembered credentials using SecureStore. Never place passwords into Redux or ordinary browser storage.</li>
+      </ul>
+      <p>Evidence: <a href="../../../../resqperation-system/frontend-web/src/api/client.js">web HTTP client</a>, <a href="../../../../resqperation-system/frontend-web/src/api/token.js">web token storage</a>, <a href="../../../../resqperation-system/frontend-web/src/api/authApi.js">web login/logout</a>, <a href="../../../../resqperation-system/frontend-mobile/api/client.ts">mobile networking/failover</a>, <a href="../../../../resqperation-system/frontend-mobile/utils/secureStorage.ts">native secure storage</a>, <a href="../../../../resqperation-system/backend-laravel/app/Services/Shared/AuthService.php">backend login/token issue/revoke</a>, <a href="../../../../resqperation-system/backend-laravel/config/cors.php">CORS settings</a>, <a href="../../../../resqperation-system/backend-laravel/config/session.php">Laravel session settings</a>, <a href="../../../../resqperation-system/backend-laravel/config/sanctum.php">Sanctum settings</a>.</p>
+      <h3>Redux and other frontend state: what is stored where?</h3>
+      <table>
+        <thead><tr><th>Kind of state</th><th>Where it lives</th><th>Lifetime / update rule</th></tr></thead>
+        <tbody>
+          <tr><td>Current control state (selected tab, open modal, text in form)</td><td>Usually React component state such as <code>useState</code> and refs.</td><td>Typically until the component/page is discarded; not automatically durable across app restart.</td></tr>
+          <tr><td>Web server query results</td><td>Redux store and RTK Query cache; an Axios transport adapter also has a bounded in-memory GET cache/in-flight request sharing.</td><td>In memory only; entries have endpoint-based TTLs (e.g. short dashboard/overview TTL); invalidated after writes, relevant events, online/focus changes or account changes.</td></tr>
+          <tr><td>Mobile server query data</td><td>Mobile Redux transport store plus screen hooks/local component state.</td><td>In memory; GET cache has route-specific TTL and is reset on account, API server or token change.</td></tr>
+          <tr><td>Mobile cached overview snapshot</td><td>Account-scoped mobile snapshot storage via Expo SQLite key/value store on native, with a web localStorage implementation for web.</td><td>For offline/stale rendering; tagged to account/server so another household/responder must not reuse it. UI reports last-sync/offline state.</td></tr>
+          <tr><td>Offline navigation and pending work</td><td>Native SQLite database <code>resq_navigation.db</code>, per selected user account.</td><td>Durable across app restart; contains downloaded operational snapshot, route cache, trip track, event outbox and sync acknowledgements.</td></tr>
+          <tr><td>Credentials</td><td>Separate from Redux: browser localStorage for web access token; native SecureStore for mobile token; browser/native password vault behavior is separate.</td><td>Cleared/revoked on logout, invalid token or account/server transition where implemented.</td></tr>
+        </tbody>
+      </table>
+      <p><b>Web Redux details:</b> <code>main.jsx</code> wraps the app in Redux Provider; <code>apiStore.js</code> configures a <code>serverData</code> slice and RTK Query reducer/middleware. The <code>operationsApi.js</code> endpoints provide resource tags; a successful write invalidates relevant tags, which tells RTK Query subscribed views to refresh. The separate Axios adapter canonicalizes request parameters, shares identical in-flight GETs, caches eligible small JSON GET responses for a short TTL, caps entries, and clears data when the API/token/device scope changes. Credentials and Axios config objects intentionally are not stored in Redux or DevTools. Other screens still use local React state—Redux is not the storage location for every value.</p>
+      <p><b>Mobile state details:</b> the mobile Redux store primarily supports shared network response caching and view snapshots; screen-local state remains React state. On logout/account change, API state is reset and navigation selects a per-account SQLite store. Changes are serialized so GPS writes, trip/outbox writes and logout cleanup do not race each other.</p>
+      <p>Evidence: <a href="../../../../resqperation-system/frontend-web/src/main.jsx">web Redux provider</a>, <a href="../../../../resqperation-system/frontend-web/src/state/apiStore.js">web cache/store</a>, <a href="../../../../resqperation-system/frontend-web/src/state/operationsApi.js">RTK Query API and tags</a>, <a href="../../../../resqperation-system/frontend-mobile/state/apiStore.js">mobile Redux cache</a>, <a href="../../../../resqperation-system/frontend-mobile/hooks/useMobileOverview.ts">mobile overview refresh/snapshot hook</a>.</p>
+      <h3>Offline behavior: cached reading is not the same as offline writes</h3>
+      <div class="diagram"><b>Online preparation (rescuer)</b><br>
+API bootstrap / assignments / household data / route geometries<br>
+  → save snapshot and active-pack manifest in native SQLite<br>
+  → download bounded map tiles on Wi-Fi (with progress/size checks)<br><br>
+<b>When disconnected</b><br>
+local SQLite snapshot + downloaded map pack + GPS<br>
+  → render saved directions; record trip points locally<br>
+  → queue trip.start / trip.points / trip.end / selected household.status event<br><br>
+<b>When connection returns</b><br>
+network check → ordered batches → POST /api/v1/mobile/sync<br>
+  → server verifies bound device/team/assignment + event UUID<br>
+  → server transaction applies event and records acknowledgement<br>
+  → phone deletes processed outbox events; failures remain visible locally</div>
+      <ul>
+        <li><b>Map:</b> the rescuer explicitly downloads the active map pack over Wi-Fi. MapLibre offline packs (or a supported imported local map pack) are versioned; previous version packs may be removed after the new pack completes; download size is bounded. An offline map is map data only—it does not itself fetch new road directions.</li>
+        <li><b>Routes:</b> routes and dispatch snapshots must have been cached or downloaded while connected. Live rerouting/refresh needs the API and routing service. Existing saved route can still be displayed offline.</li>
+        <li><b>Trips:</b> native SQLite stores trip metadata and GPS points. The local outbox has unique client event UUIDs; server processes event IDs idempotently in <code>sync_events</code>. Trip start must be acknowledged first because later point/end events need the server trip ID. GPS points are filtered for impossible coordinates, accuracy, timestamp, speed and minimum movement distance.</li>
+        <li><b>Queued field household status:</b> the rescuer offline-navigation screen explicitly queues this event for <code>/mobile/sync</code>. It is a defined, authorized responder sync workflow. Do not infer that every household-app status submission or every other POST is queued offline; the ordinary household status API helper posts directly and must be online.</li>
+        <li><b>Retry:</b> an unavailable network leaves pending local work. Sync batches are bounded, ordered and use backoff; the server returns acknowledgements. A rejected event is retained as a failed local record for investigation and may block dependent trip events rather than being silently reported as delivered.</li>
+        <li><b>Data reconciliation:</b> local events are not authoritative server records until accepted and acknowledged. Show “saved on this phone / awaiting sync” distinctly from “saved to HQ”. Duplicate event IDs must not create duplicate server actions.</li>
+      </ul>
+      <p>Offline code references: <a href="../../../../resqperation-system/frontend-mobile/utils/navigationStore.ts">SQLite tables, local cache and outbox</a>, <a href="../../../../resqperation-system/frontend-mobile/utils/navigationRuntime.ts">GPS collection and ordered sync</a>, <a href="../../../../resqperation-system/frontend-mobile/utils/navigationPacks.ts">offline map pack download</a>, <a href="../../../../resqperation-system/frontend-mobile/components/rescuer/OfflineNavigationScreen.tsx">offline navigation UI and queued status</a>, <a href="../../../../resqperation-system/backend-laravel/app/Services/Navigation/MobileSyncService.php">server sync/idempotency logic</a>, <a href="../../../../resqperation-system/backend-laravel/app/Http/Controllers/Api/MobileNavigationController.php">sync endpoint controller</a>.</p>
+      <h3>Database indexing: making common lookups faster</h3>
+      <p>An index is an additional database structure that helps MySQL/SQLite locate rows without scanning an entire table. It speeds up matching/sorting columns used in real queries, but takes storage and makes writes slightly more expensive. A <b>composite index</b> covers multiple columns in a defined order; a query often benefits when it filters by the leftmost columns first. An index does not replace validation, authorization or a correct SQL query.</p>
+      <table>
+        <thead><tr><th>Example in migrations</th><th>Typical query pattern it can help</th><th>Why column order matters</th></tr></thead>
+        <tbody>
+          <tr><td><code>household_status_logs(disaster_id, household_id, submitted_at, status_log_id)</code></td><td>Find a particular household's recent status history during an event.</td><td>Event and household filters come first, then time/order.</td></tr>
+          <tr><td><code>responder_assignments(disaster_id, status, assigned_at, assignment_id)</code></td><td>Find active dispatches for an event in assignment order.</td><td>Common equality filters precede ordering columns.</td></tr>
+          <tr><td><code>notifications(user_id, is_read, created_at, notif_id)</code></td><td>Load a user's unread/latest notification feed.</td><td>User/read-state filters plus created-time ordering form the lookup prefix.</td></tr>
+          <tr><td>SQLite <code>outbox(status, created_at)</code> and <code>local_trip_points(local_trip_id, recorded_at)</code></td><td>Select pending local events or chronological points for one trip.</td><td>Index begins with the column used to narrow the result set.</td></tr>
+        </tbody>
+      </table>
+      <p>Laravel schema migrations add/check indexes only when tables/columns exist; migrations are the reproducible source of schema changes. To diagnose slowness, identify the actual SQL/query, check filter and sort columns, inspect existing indexes, use a query plan such as MySQL <code>EXPLAIN</code>, measure representative data and test before adding an index. Do not add a speculative index to every column.</p>
+      <p><b>“Indexing” can mean two unrelated things:</b> relational DB indexes accelerate SQL queries; a search index/catalog is a separate full-text or document-search structure. This system's database index migrations are not proof that all text fields have a full-text search index. Global search is implemented by application queries/services and should be traced separately.</p>
+      <p>Evidence: <a href="../../../../resqperation-system/backend-laravel/database/migrations/2026_10_24_000002_add_operational_query_indexes.php">operational MySQL indexes</a>, <a href="../../../../resqperation-system/backend-laravel/database/migrations/2026_10_29_000001_add_mobile_overview_indexes.php">mobile overview indexes</a>, <a href="../../../../resqperation-system/backend-laravel/database/migrations/2026_10_09_000006_add_realtime_read_indexes.php">realtime read indexes</a>, <a href="../../../../resqperation-system/frontend-mobile/utils/navigationStore.ts">SQLite indexes</a>.</p>
+    </section>
+
+    <section id="standards">
+      <h2>9. Coding standards and conventions</h2>
+      <p>The repository shows practical conventions and lint/type-check commands. Do not claim a formal team standard document exists unless the team has one outside this repository.</p>
+      <table>
+        <thead><tr><th>Area</th><th>Observed conventions / checks</th><th>Recommended standard when explaining or contributing</th></tr></thead>
+        <tbody>
+          <tr><td>Backend PHP</td><td>Laravel/PSR-4 namespaces; routes separated from controllers, workflows/services, queries/models, presenters/resources and jobs; Composer includes Laravel Pint and PHPUnit tooling.</td><td>Use typed inputs/returns where practical, Laravel validation/request classes, policies/middleware for access, transactions for related writes, explicit provider errors, and tests for workflow rules. Run Pint and relevant Laravel tests.</td></tr>
+          <tr><td>Web React/JavaScript</td><td>ES modules, React components/pages, shared API client/helpers, Redux Toolkit state, CSS files; ESLint script is defined.</td><td>Keep API transport out of UI, reuse the shared client, handle loading/error/empty states, avoid duplicating permission logic, follow existing component/CSS patterns, and run ESLint plus production build/tests.</td></tr>
+          <tr><td>Mobile TypeScript</td><td>Expo Router screens and TypeScript components/utilities; scripts include Expo lint and <code>tsc --noEmit</code>; tests use Node's test runner.</td><td>Keep device APIs behind existing utilities, make permission and offline states explicit, avoid logging secrets/personal data, and test native-specific behaviors on actual devices.</td></tr>
+          <tr><td>API contracts</td><td>Versioned API routes and frontend API modules; response/presenter code and route inventory are present.</td><td>Preserve consistent status codes and response shapes, validate inputs server-side, do not treat the UI as an authorization control, and document changes to external payload contracts.</td></tr>
+          <tr><td>Secrets/configuration</td><td>Environment variables and example files are used for credentials, URLs, keys and feature settings.</td><td>Commit names/placeholders only; store real credentials in deployment secret storage; never embed backend keys in HTML, JS bundles, logs or defense screenshots.</td></tr>
+        </tbody>
+      </table>
+      <div class="note">These rows distinguish observed tooling from recommended practice. The guide does not certify that every file is lint-clean or that every recommendation is already enforced in CI.</div>
+    </section>
+
+    <section id="tools">
+      <h2>10. Tools used: development, testing and operations</h2>
+      <table>
+        <thead><tr><th>Tool</th><th>Why it is used / where to see it</th></tr></thead>
+        <tbody>
+          <tr><td>PHP + Composer + Artisan</td><td>Backend runtime, dependency installation, migrations, queues, scheduling and test commands; see <a href="../../../../resqperation-system/backend-laravel/composer.json">Composer scripts</a>.</td></tr>
+          <tr><td>Node.js + npm + Vite</td><td>Web dependency management, development server, lint/build and tests; see <a href="../../../../resqperation-system/frontend-web/package.json">web scripts</a>.</td></tr>
+          <tr><td>Expo + React Native + EAS</td><td>Mobile development, native packaging and Android builds; see <a href="../../../../resqperation-system/frontend-mobile/package.json">mobile scripts</a> and <a href="../../../../resqperation-system/frontend-mobile/eas.json">EAS profiles</a>.</td></tr>
+          <tr><td>PHPUnit / Node test runner</td><td>Backend and client-focused automated test suites; individual tests do not replace end-to-end partner/device checks.</td></tr>
+          <tr><td>Docker Compose</td><td>Defines local/server service topology, including databases, cache/queue support, API/web edge and optional navigation; see <a href="../../../../resqperation-system/docker-compose.yml">compose configuration</a>.</td></tr>
+          <tr><td>MySQL / Redis</td><td>Relational data storage and optional queue/cache/realtime infrastructure, depending on environment configuration.</td></tr>
+          <tr><td>TileServer-GL / Valhalla</td><td>Optional offline/local map tiles and route computation; require map data, config, running services and device connectivity or downloaded packs.</td></tr>
+          <tr><td>GitHub / EAS / deployment host</td><td>Source/release/build or runtime hosting may be used, but the code alone does not establish which exact environment is active. Ask for the deployed version, release and operator runbook.</td></tr>
+        </tbody>
+      </table>
+      <p>Available verification commands are declared in the manifests. For example, web uses <code>npm run lint</code> and <code>npm run build</code>; mobile uses <code>npm run lint</code>, <code>npm run check</code> and the focused tests; backend uses <code>php artisan test</code> and Pint. Run from the relevant project directory and against the supported environment.</p>
+    </section>
+
+    <section id="operations">
+      <h2>11. Configuration, privacy, reliability and known limits</h2>
+      <ul>
+        <li><b>Environment-specific services:</b> API host, database connection, partner integration credentials, SMS gateway, OneSignal, weather tokens, map/routing endpoints and worker settings are configured separately from source code.</li>
+        <li><b>Queues and schedules:</b> queued broadcasts and partner handoffs do not finish unless the configured queue workers/scheduler are running. Monitor failures and retry state.</li>
+        <li><b>External service failures:</b> tell users when a provider is unconfigured or unavailable; do not show a success state merely because a local request was stored.</li>
+        <li><b>Location and household information:</b> is sensitive. Limit access to legitimate operational duties, explain device permissions and retention, and avoid personal data in screenshots, public repositories or logs.</li>
+        <li><b>Offline conditions:</b> offline map assets do not make all API workflows offline. Cached views, unsent data, route packs and actual connectivity behavior must be tested separately.</li>
+        <li><b>Role/data freshness:</b> screen permissions and external data depend on current account/role configuration and source timestamps.</li>
+      </ul>
+      <h3>Before telling the panel a feature is live, verify</h3>
+      <ol><li>Which exact deployed app/backend version is running?</li><li>Which environment and feature settings are active?</li><li>Is the required queue, scheduler, map service or provider running?</li><li>Can a test device/account perform the action under its real role?</li><li>Does the expected record appear in the system of record?</li><li>Can you show timestamps, logs, acknowledgement or test evidence?</li></ol>
+      <p>Implementation coverage and known limitations: <a href="../../../../resqperation-system/docs/RESQPERATION_USE_CASE_COVERAGE.md">use-case coverage notes</a>, <a href="../../../../resqperation-system/backend-laravel/ANDROID-PUSH.md">push verification notes</a>, <a href="../../../../resqperation-system/frontend-mobile/FIRST_RUN_SETUP.md">mobile first-run setup</a>.</p>
+    </section>
+
+    <section id="glossary">
+      <h2>12. Technical glossary: define the words before using them</h2>
+      <p>These are plain-language definitions for terms used in the code and in a technical defense. “In this system” explains the specific RESQPERATION usage where it matters. The package inventory covers every <b>direct runtime and development dependency declared</b> in the three project manifests; lockfiles contain the exact resolved transitive dependencies.</p>
+      <h3>Web, API and backend words</h3>
+      <table><thead><tr><th>Word</th><th>Definition / RESQPERATION example</th></tr></thead><tbody>
+        <tr><td>API (Application Programming Interface)</td><td>A defined contract that lets one program request data or actions from another. The web/mobile clients call Laravel API endpoints; they do not query MySQL directly.</td></tr>
+        <tr><td>Endpoint</td><td>A specific API address/action, e.g. <code>GET /api/v1/household/overview</code>.</td></tr>
+        <tr><td>Route</td><td>Backend mapping of HTTP method + URL pattern to a handler and middleware. Example route path <code>POST /household/members/{memberId}/status</code> becomes full URL path <code>/api/v1/household/members/123/status</code>.</td></tr>
+        <tr><td>HTTP / HTTPS</td><td>HTTP is the web request/response protocol; HTTPS is HTTP protected by TLS encryption in transit. Public production API traffic should use HTTPS.</td></tr>
+        <tr><td>REST / REST-style</td><td>REST is an architectural style for resource-oriented network APIs. “REST-style” means endpoints use standard HTTP methods and resource paths (GET read, POST create/action, PATCH partial update, PUT replace/update, DELETE remove); it does not claim every REST architectural constraint is formally certified.</td></tr>
+        <tr><td>JSON</td><td>JavaScript Object Notation: text data format using objects, arrays, strings, numbers, booleans and null. Example request body: <code>{"status_key":"safe"}</code>.</td></tr>
+        <tr><td>Request / response</td><td>A request is the method, URL, headers and optional body sent by a client. A response is the status code, headers and optional body returned by Laravel/provider.</td></tr>
+        <tr><td>HTTP method / verb</td><td>The action type: GET reads, POST submits/creates, PATCH partially changes, PUT replaces/sets, DELETE removes. A method alone does not determine authorization.</td></tr>
+        <tr><td>Header</td><td>Metadata sent with an HTTP request/response. Examples: <code>Accept: application/json</code>, <code>Content-Type: application/json</code>, <code>Authorization</code>, <code>X-Device-UUID</code>.</td></tr>
+        <tr><td>Path parameter</td><td>A value embedded in a route path, such as <code>{memberId}</code>.</td></tr>
+        <tr><td>Query parameter</td><td>Optional values after <code>?</code>, e.g. <code>?page=2&amp;per_page=25</code>; commonly used for pagination and filters.</td></tr>
+        <tr><td>Payload / body</td><td>The data carried inside a request or response, commonly JSON; keep it minimal and validate it.</td></tr>
+        <tr><td>Status code</td><td>Standard numeric result: 2xx success; 4xx caller/input/access problem; 5xx server/upstream problem. Examples: 200 OK, 201 Created, 401 unauthenticated, 403 forbidden, 404 missing, 409 conflict, 422 invalid fields, 429 rate limited, 503 dependency unavailable.</td></tr>
+        <tr><td>Controller</td><td>HTTP-facing PHP class that receives the request, calls application logic, and returns a response. Keep it focused on request/response duties.</td></tr>
+        <tr><td>Service / workflow</td><td>Backend class that coordinates a meaningful application operation and business rules. It can call validators, queries, writers, other services and integrations.</td></tr>
+        <tr><td>Business logic</td><td>Rules that determine what the application is allowed to do and how state changes. Example: only a valid household member may submit an allowed status during the active event.</td></tr>
+        <tr><td>Action</td><td>A focused reusable domain operation, often a single state transition. Example: update current household status and dispatch consequences atomically.</td></tr>
+        <tr><td>Query</td><td>Read-side code that retrieves/filters/sorts records from the database; it should not be confused with an endpoint.</td></tr>
+        <tr><td>Model / ORM</td><td>A model represents a database entity; ORM (Object-Relational Mapper) maps code objects/relations to relational tables. Laravel's Eloquent is the ORM.</td></tr>
+        <tr><td>Presenter / Resource / DTO</td><td>Presenter/resource shapes the output/payload; DTO (Data Transfer Object) is a typed data carrier. They prevent raw DB rows from automatically becoming public API contracts.</td></tr>
+        <tr><td>Dependency injection / container</td><td>Framework gives a class the service objects it needs rather than the class manually constructing every dependency. Laravel resolves many typed controller/service constructor parameters.</td></tr>
+        <tr><td>Validation</td><td>Checks that submitted values have expected types, ranges and allowed choices. It does not by itself prove caller authorization.</td></tr>
+        <tr><td>Authentication / authorization</td><td>Authentication answers “who is this caller?” Authorization answers “may this caller perform this action on this data?” Both checks are required.</td></tr>
+        <tr><td>Middleware</td><td>Code that runs around a request before/after a controller, often authenticating, checking roles/device ownership, limiting request rate or adding headers.</td></tr>
+        <tr><td>Rate limit / throttle</td><td>Maximum request frequency allowed in a time window; protects login, sensitive endpoints and services from excessive traffic.</td></tr>
+        <tr><td>Transaction / commit / rollback</td><td>A transaction groups related DB writes: commit keeps all successful changes; rollback undoes them when the operation fails. Use it when multiple records must stay consistent.</td></tr>
+        <tr><td>Atomic</td><td>All-or-nothing behavior for a logical operation; other processes should not observe a half-finished state.</td></tr>
+        <tr><td>Schema / migration</td><td>Schema is the table/column/key/index structure. A migration is a versioned PHP change that creates or updates that structure repeatably.</td></tr>
+        <tr><td>Foreign key / relationship</td><td>A foreign key enforces a link between rows; an ORM relationship describes navigation between related models, e.g. status log belongs to household/event/user.</td></tr>
+        <tr><td>Database index</td><td>An additional lookup structure for faster filtering/sorting. It consumes space and adds a small cost to writes; choose based on measured query patterns.</td></tr>
+        <tr><td>Pagination</td><td>Splitting large result sets into pages instead of fetching all records. This API has shared page/per-page rules and a capped maximum.</td></tr>
+        <tr><td>Cache / TTL</td><td>Cache is a temporary copy used to avoid repeat work; TTL (time to live) is how long it may be reused before expiring.</td></tr>
+        <tr><td>Audit log</td><td>Record of who changed what and when, used for accountability/troubleshooting; it is not the same as application debug log.</td></tr>
+        <tr><td>Integration / upstream</td><td>Integration is a software connection between systems. Upstream is the external/provider system RESQPERATION is calling; downstream often describes a consumer that calls RESQPERATION.</td></tr>
+        <tr><td>API key</td><td>A shared secret used by a system to authenticate an integration. Store it on the backend/deployment secret store, never in the frontend bundle.</td></tr>
+        <tr><td>Signed URL</td><td>URL with a time-limited cryptographic signature proving authorization for that specific URL/action; protect it like a temporary credential.</td></tr>
+      </tbody></table>
+      <h3>Networking, accounts and reliability words</h3>
+      <table><thead><tr><th>Word</th><th>Definition / RESQPERATION example</th></tr></thead><tbody>
+        <tr><td>DNS / hostname / IP address</td><td>DNS maps names to network addresses. Hostname is the human-readable server name; an IP address is the numeric network address.</td></tr>
+        <tr><td>Port</td><td>Number selecting a service on a host (e.g. development Laravel port 8000, Vite web port 5175).</td></tr>
+        <tr><td>LAN / Wi-Fi</td><td>LAN is a local network; Wi-Fi is one way devices connect to it. Phone and server must be reachable and firewall rules must permit the API port.</td></tr>
+        <tr><td>Tailscale / Ngrok</td><td>Network tunnel/overlay services used as possible private or public paths from mobile device to API. They provide reachability, not application authorization.</td></tr>
+        <tr><td>CORS</td><td>Browser security policy that lets a server specify which web origins may read its responses. It is not a substitute for login, permissions or API-key checks.</td></tr>
+        <tr><td>TLS / certificate</td><td>TLS encrypts/authenticates a network connection; a certificate helps the client verify the server identity. HTTPS relies on TLS.</td></tr>
+        <tr><td>Cookie</td><td>Small browser-managed value automatically sent to a matching domain/path. Cookie-based auth needs correct Secure, HttpOnly, SameSite and CSRF controls.</td></tr>
+        <tr><td>Session (server)</td><td>Server-side state across requests, commonly identified by a session cookie. Laravel has session configuration, but the main API clients use tokens.</td></tr>
+        <tr><td>Bearer token / Sanctum token</td><td>Secret credential sent in the Authorization header; whoever possesses it can act within its permissions. Sanctum issues/revokes API personal access tokens here.</td></tr>
+        <tr><td>CSRF</td><td>Cross-Site Request Forgery: a malicious site attempts a state-changing request using a victim's automatically attached credentials; cookie-auth flows use CSRF protections.</td></tr>
+        <tr><td>401 vs 403</td><td>401 means identity is missing/invalid; 403 means the request was recognized but not allowed.</td></tr>
+        <tr><td>Health / readiness</td><td>Liveness asks if the process is running; readiness asks whether it can accept work and required dependencies (e.g. DB) are available.</td></tr>
+        <tr><td>Queue / job / worker</td><td>A queue stores background tasks; a job is one task; a worker is a process that consumes and executes jobs.</td></tr>
+        <tr><td>Scheduler</td><td>Time-based runner that triggers recurring work, such as draining outboxes or refreshing data. It must run in deployment.</td></tr>
+        <tr><td>Outbox</td><td>Durable record of work to send outside the current transaction. A worker retries delivery without losing the originating business change.</td></tr>
+        <tr><td>Retry / backoff</td><td>Retry repeats a failed operation; backoff waits longer between failures to reduce load and allow recovery.</td></tr>
+        <tr><td>Idempotency / idempotency key</td><td>Repeating a request/event with the same stable ID should not repeat its side effect. Mobile sync uses client event IDs to detect duplicates.</td></tr>
+        <tr><td>Acknowledgement (ack)</td><td>Explicit server response confirming an event was processed/rejected. Local “queued” is not equivalent to server ack.</td></tr>
+        <tr><td>Failover</td><td>Switch to another configured server/network route after a failure. Replaying a write can create duplicates, so only safe operations should retry automatically.</td></tr>
+        <tr><td>Timeout</td><td>Maximum wait for a request before the client/provider stops waiting; timeout does not always prove the server did not execute a write.</td></tr>
+      </tbody></table>
+      <h3>Frontend, state and offline words</h3>
+      <table><thead><tr><th>Word</th><th>Definition / RESQPERATION example</th></tr></thead><tbody>
+        <tr><td>Frontend / backend</td><td>Frontend is user-facing code running in browser/device; backend is server-side code that applies rules and accesses protected data.</td></tr>
+        <tr><td>React / component</td><td>React is a UI library; component is a reusable piece of interface composed into pages/screens.</td></tr>
+        <tr><td>State / props</td><td>State is changing data that affects rendering; props are inputs passed from a parent component to a child.</td></tr>
+        <tr><td>Hook</td><td>React function API for state/lifecycle/reusable behavior, such as <code>useState</code>, <code>useEffect</code> or project-specific hooks.</td></tr>
+        <tr><td>Redux / store / slice</td><td>Redux is a predictable shared state container; the store holds reducers, a slice groups a portion of state and its update actions. Here it does not hold all UI fields or the credentials.</td></tr>
+        <tr><td>Redux Toolkit (RTK)</td><td>Official Redux helpers that reduce boilerplate and provide store, slice and query tooling.</td></tr>
+        <tr><td>RTK Query</td><td>Redux Toolkit data-fetching/cache feature: endpoints, subscriptions, tags and invalidation can coordinate server data refresh.</td></tr>
+        <tr><td>Cache invalidation</td><td>Marking cached data stale after a related write/event so the next read fetches fresh information.</td></tr>
+        <tr><td>In-flight request sharing</td><td>Multiple identical reads reuse one network request while it is still pending; reduces duplicate traffic.</td></tr>
+        <tr><td>localStorage / SecureStore</td><td>localStorage is browser key/value storage accessible to JavaScript; Expo SecureStore uses OS-backed secure storage on native phones.</td></tr>
+        <tr><td>SQLite</td><td>Embedded relational database stored on the device; used for native offline navigation state/outbox.</td></tr>
+        <tr><td>Offline snapshot</td><td>Saved copy of information previously downloaded, displayed without a live server; it can be stale and should show when last synced.</td></tr>
+        <tr><td>Outbox sync</td><td>Process where local queued events upload later, receive server acknowledgement, then are removed/marked failed.</td></tr>
+        <tr><td>Progressive Web App (PWA)</td><td>Web application that can be installed/behave more like an app in supported browsers; does not automatically make every feature offline.</td></tr>
+        <tr><td>Bundle / build / runtime</td><td>Build converts source/dependencies into deliverable files; bundle is compiled app code/assets; runtime is where that built code executes.</td></tr>
+        <tr><td>TypeScript / JavaScript</td><td>JavaScript is the programming language for web/mobile; TypeScript adds static type checks and compiles to JavaScript.</td></tr>
+      </tbody></table>
+      <h3>Mapping and communication words</h3>
+      <table><thead><tr><th>Word</th><th>Definition</th></tr></thead><tbody>
+        <tr><td>GIS / geospatial</td><td>GIS is Geographic Information System; geospatial means data tied to real-world coordinates/areas.</td></tr>
+        <tr><td>Basemap / tile / tile layer</td><td>Basemap is background geographic context; tile is a small image/vector chunk for a map zoom; a tile layer is the source rendered by the map.</td></tr>
+        <tr><td>Overlay / layer</td><td>Additional data drawn over the basemap, e.g. incidents, households, routes or hazards.</td></tr>
+        <tr><td>GeoJSON / geometry</td><td>GeoJSON is a JSON format for points, lines and polygons; geometry is the spatial shape itself.</td></tr>
+        <tr><td>Boundary / bounds / bounding box</td><td>Boundary is an area polygon; bounds are coordinate limits, often a rectangle. Bounds do not prove an official polygon.</td></tr>
+        <tr><td>Geocoding / reverse geocoding</td><td>Geocoding turns a place/address into coordinates; reverse geocoding estimates a place/address from coordinates.</td></tr>
+        <tr><td>Routing / route geometry / ETA</td><td>Routing finds a path on a road network; geometry is the line drawn on the map; ETA is estimated arrival time.</td></tr>
+        <tr><td>GPS / accuracy / coordinate</td><td>GPS is satellite-based location; a coordinate is latitude/longitude; accuracy estimates the likely location error.</td></tr>
+        <tr><td>Weather forecast / advisory</td><td>Forecast is model-based expected conditions; official advisory/warning is an issued statement by the authority. They must not be conflated.</td></tr>
+        <tr><td>Push notification</td><td>Server-to-device alert delivered through platform push infrastructure; permissions/network/provider state affect receipt.</td></tr>
+        <tr><td>SMS gateway</td><td>Service/device that sends or receives text messages through an API; API acceptance is not carrier delivery proof.</td></tr>
+        <tr><td>PTT (Push-to-Talk)</td><td>Press-to-speak workflow; this project records/uploads internet voice clips, not radio frequency transmissions.</td></tr>
+        <tr><td>WebSocket / realtime</td><td>WebSocket is a long-lived two-way network connection; realtime usually means updates without waiting for a manual refresh. Requires server/provider configuration.</td></tr>
+        <tr><td>Provider acceptance / delivery receipt</td><td>Provider acceptance means the provider accepted a request; a delivery receipt is stronger evidence that a device/carrier delivered it. Neither proves a human read/acted on it.</td></tr>
+      </tbody></table>
+      <h3>Technology-stack dictionary: backend and project tools</h3>
+      <table><thead><tr><th>Technology / package</th><th>What it is for</th></tr></thead><tbody>
+        <tr><td>PHP 8.3</td><td>Server-side programming language/runtime required by backend manifest.</td></tr>
+        <tr><td>Laravel 13 (<code>laravel/framework</code>)</td><td>PHP web framework: routing, middleware, dependency injection, validation, database access, queues and testing conventions.</td></tr>
+        <tr><td>Laravel Sanctum (<code>laravel/sanctum</code>)</td><td>Laravel package for first-party SPA authentication and personal access API tokens; token flow is the main client path here.</td></tr>
+        <tr><td>Laravel Reverb (<code>laravel/reverb</code>)</td><td>Laravel's WebSocket broadcasting server; package presence does not mean a Reverb server is running.</td></tr>
+        <tr><td>Laravel Tinker (<code>laravel/tinker</code>) / Pail (<code>laravel/pail</code>)</td><td>Tinker is an interactive Laravel console; Pail is a command-line log tailing tool for Laravel.</td></tr>
+        <tr><td>Predis (<code>predis/predis</code>)</td><td>PHP Redis client library for Redis-backed features when configured.</td></tr>
+        <tr><td>Flysystem AWS S3 adapter (<code>league/flysystem-aws-s3-v3</code>)</td><td>Connects Laravel's filesystem abstraction to Amazon S3-compatible object storage when configured.</td></tr>
+        <tr><td>minishlink/web-push</td><td>PHP library for browser Web Push protocol delivery using VAPID subscriptions/keys.</td></tr>
+        <tr><td>barryvdh/laravel-dompdf</td><td>Laravel integration for generating PDF documents from HTML.</td></tr>
+        <tr><td>OpenSpout (<code>openspout/openspout</code>)</td><td>PHP library for reading/writing spreadsheet and delimited data efficiently.</td></tr>
+        <tr><td>PhpSpreadsheet (<code>phpoffice/phpspreadsheet</code>)</td><td>PHP library for creating/reading XLSX and other spreadsheet formats.</td></tr>
+        <tr><td>Faker (<code>fakerphp/faker</code>)</td><td>Creates fake names/values for tests and seed data; not a production data source.</td></tr>
+        <tr><td>Laravel Pint (<code>laravel/pint</code>)</td><td>Opinionated PHP code formatter.</td></tr>
+        <tr><td>PHPUnit (<code>phpunit/phpunit</code>) / Mockery (<code>mockery/mockery</code>)</td><td>PHPUnit runs backend tests; Mockery creates test doubles/mocks.</td></tr>
+        <tr><td>Collision (<code>nunomaduro/collision</code>)</td><td>Improves readable command-line error output in development/testing.</td></tr>
+        <tr><td>Laravel PAO (<code>laravel/pao</code>)</td><td>Provides agent-optimized output for PHP testing tools; a developer/test workflow aid, not a production service.</td></tr>
+        <tr><td>Composer</td><td>PHP dependency manager and autoloader; <code>composer.json</code> declares packages and <code>composer.lock</code> pins resolved versions.</td></tr>
+        <tr><td>MySQL / PDO</td><td>MySQL is a relational database server; PDO is PHP's database connection abstraction used by Laravel drivers.</td></tr>
+        <tr><td>Redis</td><td>In-memory data service that can support queues, cache and realtime infrastructure; optional according to environment settings.</td></tr>
+        <tr><td>Docker Compose / Nginx</td><td>Compose starts related containers/services from configuration; Nginx is a web server/reverse proxy for traffic routing/static delivery.</td></tr>
+      </tbody></table>
+      <h3>Technology-stack dictionary: web direct dependencies</h3>
+      <table><thead><tr><th>Package</th><th>Definition</th></tr></thead><tbody>
+        <tr><td>React / React DOM</td><td>React builds component UI; React DOM mounts it into the browser's document.</td></tr>
+        <tr><td>Vite / @vitejs/plugin-react</td><td>Vite is the web dev server/build tool; the plugin enables React transforms and Fast Refresh.</td></tr>
+        <tr><td>React Router (<code>react-router-dom</code>)</td><td>Client-side URL routing between web pages without a full document reload.</td></tr>
+        <tr><td>Axios (<code>axios</code>)</td><td>HTTP client library used by the shared web API module.</td></tr>
+        <tr><td>@reduxjs/toolkit / react-redux</td><td>Redux Toolkit creates store/slices/RTK Query; React Redux provides the React Provider and hooks.</td></tr>
+        <tr><td>@tanstack/react-table</td><td>Headless table logic for sorting, filtering, pagination and row models.</td></tr>
+        <tr><td>Leaflet / react-leaflet</td><td>Leaflet is interactive 2D web mapping; React-Leaflet binds Leaflet maps/layers to React components.</td></tr>
+        <tr><td>Chart.js (<code>chart.js</code>) / react-chartjs-2</td><td>Chart.js draws charts; react-chartjs-2 provides React wrappers.</td></tr>
+        <tr><td>laravel-echo / pusher-js</td><td>Echo is a Laravel client for broadcast events; Pusher JS implements a compatible client transport. Both require matching realtime server configuration.</td></tr>
+        <tr><td>lucide-react</td><td>React icon component library.</td></tr>
+        <tr><td><code>@fortawesome/fontawesome-svg-core</code> / <code>@fortawesome/free-solid-svg-icons</code> / <code>@fortawesome/react-fontawesome</code></td><td>Font Awesome SVG rendering core, free solid icon definitions and React bindings.</td></tr>
+        <tr><td>@react-pdf/renderer</td><td>Builds PDF documents using React components.</td></tr>
+        <tr><td>eslint / @eslint/js / eslint-plugin-react-hooks / eslint-plugin-react-refresh / globals</td><td>Linting framework, standard JS rules, React Hooks rules, Fast Refresh checks and known global names; development-time quality tools.</td></tr>
+        <tr><td>@types/react / @types/react-dom</td><td>TypeScript type declarations for React and its browser renderer; they do not convert the web app into TypeScript.</td></tr>
+      </tbody></table>
+      <h3>Technology-stack dictionary: mobile direct dependencies</h3>
+      <table><thead><tr><th>Package</th><th>Definition</th></tr></thead><tbody>
+        <tr><td>Expo / expo-router</td><td>Expo is the React Native platform/toolchain; Expo Router uses files/folders to define app navigation/routes.</td></tr>
+        <tr><td>React / React DOM / React Native / react-native-web</td><td>React provides UI components; React DOM renders web; React Native renders native iOS/Android UI; react-native-web maps supported components to browser UI.</td></tr>
+        <tr><td><code>typescript</code> (TypeScript)</td><td>Typed JavaScript language/compiler used by mobile app source and <code>tsc --noEmit</code> type check.</td></tr>
+        <tr><td>@reduxjs/toolkit / react-redux</td><td>Redux store/slice/query utilities and React bindings for shared state.</td></tr>
+        <tr><td>Axios (<code>axios</code>)</td><td>HTTP client used to call the Laravel API, with interceptors for API origin, token, device header and route selection.</td></tr>
+        <tr><td>@maplibre/maplibre-react-native</td><td>Native MapLibre maps, raster/vector layers and downloadable offline map packs.</td></tr>
+        <tr><td>react-native-maps</td><td>Native map components supported by React Native; exact screen usage is platform-dependent.</td></tr>
+        <tr><td>expo-sqlite</td><td>SQLite database access on the device; supports persistent local trip/outbox/navigation data.</td></tr>
+        <tr><td>expo-secure-store</td><td>Native secure key/value storage for secrets such as access tokens.</td></tr>
+        <tr><td>expo-location / expo-task-manager / expo-network / expo-battery</td><td>Location/GPS access, background task registration, connectivity state and battery readings.</td></tr>
+        <tr><td>expo-crypto</td><td>Cryptographic utilities such as UUID generation/digests used by local event/snapshot logic.</td></tr>
+        <tr><td>expo-file-system / expo-asset / expo-media-library / expo-image / expo-image-picker</td><td>File I/O, bundled assets, device media access, image rendering and image selection.</td></tr>
+        <tr><td>expo-audio</td><td>Audio recording/playback support used by voice/radio features.</td></tr>
+        <tr><td>expo-font / @expo/vector-icons</td><td>Load custom fonts and use platform-friendly icon sets.</td></tr>
+        <tr><td>expo-constants</td><td>Reads app/runtime constants and Expo configuration, such as app identity and environment-provided values.</td></tr>
+        <tr><td>expo-haptics</td><td>Device vibration/haptic feedback.</td></tr>
+        <tr><td>expo-linking / expo-web-browser</td><td>Deep links/URL handling and opening web content in a browser view.</td></tr>
+        <tr><td>expo-splash-screen / expo-status-bar / expo-system-ui / expo-symbols</td><td>Startup screen, status bar, system UI theme and platform symbols.</td></tr>
+        <tr><td>expo-build-properties</td><td>Configures selected native build properties during Expo prebuild.</td></tr>
+        <tr><td>onesignal-expo-plugin / react-native-onesignal</td><td>Expo native build plugin and React Native OneSignal SDK for push notification registration/delivery.</td></tr>
+        <tr><td><code>@react-navigation/native</code> / <code>@react-navigation/bottom-tabs</code> / <code>@react-navigation/native-stack</code> / <code>@react-navigation/elements</code></td><td>Navigation engine, tab navigator, stack navigator and shared navigation UI elements used within app routing.</td></tr>
+        <tr><td>@react-native/virtualized-lists</td><td>Efficient rendering of long scrolling lists; React Native list infrastructure.</td></tr>
+        <tr><td>react-native-gesture-handler</td><td>Native-backed gesture recognition for touch interactions.</td></tr>
+        <tr><td>react-native-reanimated / react-native-worklets</td><td>Perform animations and related worklet functions efficiently, including UI-thread animation logic.</td></tr>
+        <tr><td>react-native-safe-area-context / react-native-screens</td><td>Respect device notches/system insets and use native screen containers.</td></tr>
+        <tr><td>react-native-svg</td><td>Render scalable vector graphics in React Native.</td></tr>
+        <tr><td>react-native-webview</td><td>Embed a browser view inside a native screen.</td></tr>
+        <tr><td>react-native-qrcode-svg</td><td>Render QR codes as SVG in React Native.</td></tr>
+        <tr><td>@types/react</td><td>Type declarations for React used by TypeScript checking.</td></tr>
+        <tr><td>eslint / eslint-config-expo</td><td>JavaScript/TypeScript lint engine and Expo project's lint rule preset.</td></tr>
+      </tbody></table>
+      <p><b>Version rule:</b> the package manifests declare version ranges; lockfiles pin the actual resolved dependency graph for reproducible installs. A listed dependency may be unused by a particular page, bundled only for a platform, or require separate server credentials. See <a href="../../../../resqperation-system/backend-laravel/composer.lock">Composer lock</a>, <a href="../../../../resqperation-system/frontend-web/package-lock.json">web npm lock</a> and <a href="../../../../resqperation-system/frontend-mobile/package-lock.json">mobile npm lock</a>.</p>
+      <h3>How / what / where / why — example answers</h3>
+      <p><b>“How does a responder status update reach operations?”</b> The responder uses the mobile app; it sends an authenticated API request; Laravel checks caller/device and validates data; a workflow saves the update; operations reads the resulting status from the API. A separate alert or partner exchange is another configured step, verified independently.</p>
+      <p><b>“How are external systems connected?”</b> SafeTrack has authenticated household API sync/report clients; EvaTrack has a configured report API client and report exchange routes; TrackingAid has report API code and a separate resource-request database bridge/outbox. Live availability still requires environment configuration and partner acceptance evidence.</p>
+      <p><b>“How does offline work?”</b> Selected rescuer snapshots, route data, downloaded tiles, GPS points and queued sync events can live on the device. Once online, the mobile app uploads supported events to the Laravel sync endpoint, which validates device/team/assignment and returns acknowledgements. Other features still need connectivity.</p>
+      <p><b>“Can we say every alert is delivered?”</b> No. Describe the channel, backend job and provider response; prove actual device/carrier receipt with delivery evidence.</p>
+      <h3>Reference documents in this suite</h3>
+      <p><a href="index.html">Diagram suite index</a> · <a href="FUNCTION_LIST.md">Functional use cases</a> · <a href="API_FUNCTION_LIST.csv">Complete API route list</a> · <a href="VALIDATION.json">Diagram validation snapshot</a> · <a href="06_System_Architecture/index.html">System architecture diagrams</a> · <a href="05_Data_Flow/index.html">Data-flow diagrams</a> · <a href="01_ERD/index.html">ERD diagrams</a></p>
+    </section>
+  </main>
+  <footer>
+    <p>This guide summarizes repository evidence for defense preparation. It is not a production audit, security certification, partner acceptance report, official boundary survey, or guarantee of live service availability. Recheck configuration and run the relevant end-to-end test before making deployment claims.</p>
+  </footer>
+</body>
+</html>

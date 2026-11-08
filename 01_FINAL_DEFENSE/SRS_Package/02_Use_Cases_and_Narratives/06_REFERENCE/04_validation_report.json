@@ -1,0 +1,373 @@
+{
+  "status": "passed",
+  "mermaid_version": "11.17.2",
+  "diagrams": 50,
+  "use_cases": 50,
+  "registered_routes": 208,
+  "checks": [
+    "Mermaid parser",
+    "Default text/edge limits",
+    "Matching raw and Markdown sources",
+    "Explicit use-case system boundaries",
+    "Real catalog IDs",
+    "Role-policy maxima and critical action restrictions",
+    "Actual registered route references",
+    "Neutral actor associations",
+    "Complete module/full use-case coverage",
+    "Labelled decision branches",
+    "Swimlane responsibility membership",
+    "README links"
+  ],
+  "results": [
+    {
+      "file": "01_FULL_SYSTEM/01_full_use_cases.mmd",
+      "status": "passed",
+      "nodes": 69,
+      "edges": 186,
+      "source_characters": 10662
+    },
+    {
+      "file": "01_FULL_SYSTEM/02_full_process_flow.mmd",
+      "status": "passed",
+      "nodes": 11,
+      "edges": 13,
+      "source_characters": 973
+    },
+    {
+      "file": "01_FULL_SYSTEM/03_full_responsibility_swimlane.mmd",
+      "status": "passed",
+      "nodes": 11,
+      "edges": 13,
+      "source_characters": 1692
+    },
+    {
+      "file": "02_MODULES/01_access_use_cases.mmd",
+      "status": "passed",
+      "nodes": 17,
+      "edges": 39,
+      "source_characters": 2386
+    },
+    {
+      "file": "02_MODULES/01_access_swimlane.mmd",
+      "status": "passed",
+      "nodes": 8,
+      "edges": 8,
+      "source_characters": 868
+    },
+    {
+      "file": "02_MODULES/02_administration_use_cases.mmd",
+      "status": "passed",
+      "nodes": 7,
+      "edges": 5,
+      "source_characters": 732
+    },
+    {
+      "file": "02_MODULES/02_administration_swimlane.mmd",
+      "status": "passed",
+      "nodes": 9,
+      "edges": 9,
+      "source_characters": 976
+    },
+    {
+      "file": "02_MODULES/03_household_setup_use_cases.mmd",
+      "status": "passed",
+      "nodes": 6,
+      "edges": 5,
+      "source_characters": 753
+    },
+    {
+      "file": "02_MODULES/03_household_setup_swimlane.mmd",
+      "status": "passed",
+      "nodes": 9,
+      "edges": 9,
+      "source_characters": 882
+    },
+    {
+      "file": "02_MODULES/04_safety_use_cases.mmd",
+      "status": "passed",
+      "nodes": 5,
+      "edges": 4,
+      "source_characters": 627
+    },
+    {
+      "file": "02_MODULES/04_safety_swimlane.mmd",
+      "status": "passed",
+      "nodes": 7,
+      "edges": 6,
+      "source_characters": 899
+    },
+    {
+      "file": "02_MODULES/05_alerts_use_cases.mmd",
+      "status": "passed",
+      "nodes": 11,
+      "edges": 11,
+      "source_characters": 1101
+    },
+    {
+      "file": "02_MODULES/05_alerts_swimlane.mmd",
+      "status": "passed",
+      "nodes": 11,
+      "edges": 10,
+      "source_characters": 1243
+    },
+    {
+      "file": "02_MODULES/06_monitoring_use_cases.mmd",
+      "status": "passed",
+      "nodes": 12,
+      "edges": 29,
+      "source_characters": 1925
+    },
+    {
+      "file": "02_MODULES/06_monitoring_swimlane.mmd",
+      "status": "passed",
+      "nodes": 8,
+      "edges": 7,
+      "source_characters": 787
+    },
+    {
+      "file": "02_MODULES/07_dispatch_use_cases.mmd",
+      "status": "passed",
+      "nodes": 9,
+      "edges": 10,
+      "source_characters": 948
+    },
+    {
+      "file": "02_MODULES/07_dispatch_swimlane.mmd",
+      "status": "passed",
+      "nodes": 9,
+      "edges": 8,
+      "source_characters": 1167
+    },
+    {
+      "file": "02_MODULES/08_assessment_use_cases.mmd",
+      "status": "passed",
+      "nodes": 12,
+      "edges": 15,
+      "source_characters": 1278
+    },
+    {
+      "file": "02_MODULES/08_assessment_swimlane.mmd",
+      "status": "passed",
+      "nodes": 6,
+      "edges": 5,
+      "source_characters": 817
+    },
+    {
+      "file": "02_MODULES/09_navigation_use_cases.mmd",
+      "status": "passed",
+      "nodes": 5,
+      "edges": 5,
+      "source_characters": 584
+    },
+    {
+      "file": "02_MODULES/09_navigation_swimlane.mmd",
+      "status": "passed",
+      "nodes": 10,
+      "edges": 12,
+      "source_characters": 1257
+    },
+    {
+      "file": "02_MODULES/10_radio_use_cases.mmd",
+      "status": "passed",
+      "nodes": 7,
+      "edges": 5,
+      "source_characters": 664
+    },
+    {
+      "file": "02_MODULES/10_radio_swimlane.mmd",
+      "status": "passed",
+      "nodes": 8,
+      "edges": 8,
+      "source_characters": 1051
+    },
+    {
+      "file": "02_MODULES/11_requests_use_cases.mmd",
+      "status": "passed",
+      "nodes": 14,
+      "edges": 13,
+      "source_characters": 1386
+    },
+    {
+      "file": "02_MODULES/11_requests_swimlane.mmd",
+      "status": "passed",
+      "nodes": 11,
+      "edges": 10,
+      "source_characters": 1218
+    },
+    {
+      "file": "02_MODULES/12_reports_use_cases.mmd",
+      "status": "passed",
+      "nodes": 16,
+      "edges": 45,
+      "source_characters": 2674
+    },
+    {
+      "file": "02_MODULES/12_reports_swimlane.mmd",
+      "status": "passed",
+      "nodes": 11,
+      "edges": 11,
+      "source_characters": 1371
+    },
+    {
+      "file": "03_USER_ROLES/01_public.mmd",
+      "status": "passed",
+      "nodes": 2,
+      "edges": 1,
+      "source_characters": 294
+    },
+    {
+      "file": "03_USER_ROLES/02_household_resident.mmd",
+      "status": "passed",
+      "nodes": 16,
+      "edges": 17,
+      "source_characters": 1795
+    },
+    {
+      "file": "03_USER_ROLES/03_tl.mmd",
+      "status": "passed",
+      "nodes": 18,
+      "edges": 18,
+      "source_characters": 1742
+    },
+    {
+      "file": "03_USER_ROLES/04_tm.mmd",
+      "status": "passed",
+      "nodes": 17,
+      "edges": 17,
+      "source_characters": 1656
+    },
+    {
+      "file": "03_USER_ROLES/05_chair.mmd",
+      "status": "passed",
+      "nodes": 34,
+      "edges": 39,
+      "source_characters": 3426
+    },
+    {
+      "file": "03_USER_ROLES/06_operations_admin.mmd",
+      "status": "passed",
+      "nodes": 38,
+      "edges": 43,
+      "source_characters": 4088
+    },
+    {
+      "file": "03_USER_ROLES/07_mitigation_prevention.mmd",
+      "status": "passed",
+      "nodes": 22,
+      "edges": 25,
+      "source_characters": 2476
+    },
+    {
+      "file": "03_USER_ROLES/08_preparedness.mmd",
+      "status": "passed",
+      "nodes": 22,
+      "edges": 25,
+      "source_characters": 2337
+    },
+    {
+      "file": "03_USER_ROLES/09_response.mmd",
+      "status": "passed",
+      "nodes": 29,
+      "edges": 32,
+      "source_characters": 2943
+    },
+    {
+      "file": "03_USER_ROLES/10_recovery_rehabilitation.mmd",
+      "status": "passed",
+      "nodes": 23,
+      "edges": 26,
+      "source_characters": 2619
+    },
+    {
+      "file": "04_SUBSYSTEMS/01_household_mobile.mmd",
+      "status": "passed",
+      "nodes": 11,
+      "edges": 12,
+      "source_characters": 1195
+    },
+    {
+      "file": "04_SUBSYSTEMS/02_rescuer_mobile.mmd",
+      "status": "passed",
+      "nodes": 12,
+      "edges": 15,
+      "source_characters": 1367
+    },
+    {
+      "file": "04_SUBSYSTEMS/03_hq_web.mmd",
+      "status": "passed",
+      "nodes": 9,
+      "edges": 14,
+      "source_characters": 1282
+    },
+    {
+      "file": "04_SUBSYSTEMS/04_partner_report_exchange.mmd",
+      "status": "passed",
+      "nodes": 10,
+      "edges": 9,
+      "source_characters": 1159
+    },
+    {
+      "file": "05_BUSINESS_LOGIC/01_report_to_dispatch.mmd",
+      "status": "passed",
+      "nodes": 10,
+      "edges": 10,
+      "source_characters": 1369
+    },
+    {
+      "file": "05_BUSINESS_LOGIC/02_household_owner_setup.mmd",
+      "status": "passed",
+      "nodes": 9,
+      "edges": 9,
+      "source_characters": 882
+    },
+    {
+      "file": "05_BUSINESS_LOGIC/03_alert_delivery_provider_id.mmd",
+      "status": "passed",
+      "nodes": 11,
+      "edges": 10,
+      "source_characters": 1243
+    },
+    {
+      "file": "05_BUSINESS_LOGIC/04_field_assessment_evidence.mmd",
+      "status": "passed",
+      "nodes": 6,
+      "edges": 5,
+      "source_characters": 817
+    },
+    {
+      "file": "05_BUSINESS_LOGIC/05_resource_validation_handoff.mmd",
+      "status": "passed",
+      "nodes": 11,
+      "edges": 10,
+      "source_characters": 1218
+    },
+    {
+      "file": "05_BUSINESS_LOGIC/06_report_release_and_exports.mmd",
+      "status": "passed",
+      "nodes": 11,
+      "edges": 11,
+      "source_characters": 1371
+    },
+    {
+      "file": "05_BUSINESS_LOGIC/07_offline_trip_sync.mmd",
+      "status": "passed",
+      "nodes": 10,
+      "edges": 12,
+      "source_characters": 1257
+    },
+    {
+      "file": "05_BUSINESS_LOGIC/08_radio_audio_evidence.mmd",
+      "status": "passed",
+      "nodes": 8,
+      "edges": 8,
+      "source_characters": 1051
+    },
+    {
+      "file": "05_BUSINESS_LOGIC/09_archive_identification_and_actions.mmd",
+      "status": "passed",
+      "nodes": 11,
+      "edges": 11,
+      "source_characters": 1233
+    }
+  ]
+}

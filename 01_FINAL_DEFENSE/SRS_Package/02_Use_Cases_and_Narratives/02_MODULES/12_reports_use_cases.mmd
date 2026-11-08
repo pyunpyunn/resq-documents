@@ -1,0 +1,65 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actorchair["Actor: Chairperson"]
+  actorevaTrack["Actor: EvaTrack report service"]
+  actormitigationprevention["Actor: Mitigation / Prevention"]
+  actoroperationsadmin["Actor: Operations / Admin"]
+  actorpreparedness["Actor: Preparedness"]
+  actorrecoveryrehabilitation["Actor: Recovery / Rehabilitation"]
+  actorresponse["Actor: Response personnel"]
+  actorsafeTrack["Actor: SafeTrack report service"]
+  actortrackingAid["Actor: TrackingAid"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC28(["UC-28: Prepare, save and export a situation report"])
+    caseUC29(["UC-29: Export findings for manual escalation"])
+    caseUC30(["UC-30: Browse, export and manage scoped archive evidence"])
+    caseUC34A(["UC-34A: Request a Resqperation report"])
+    caseUC34B(["UC-34B: Decide report release and generate a signed file"])
+    caseUC35(["UC-35: Request and review a partner report"])
+    caseUC36(["UC-36: Export selected situation findings"])
+  end
+  actorchair --- caseUC28
+  actoroperationsadmin --- caseUC28
+  actormitigationprevention --- caseUC28
+  actorpreparedness --- caseUC28
+  actorresponse --- caseUC28
+  actorrecoveryrehabilitation --- caseUC28
+  actorchair --- caseUC29
+  actoroperationsadmin --- caseUC29
+  actormitigationprevention --- caseUC29
+  actorpreparedness --- caseUC29
+  actorresponse --- caseUC29
+  actorrecoveryrehabilitation --- caseUC29
+  actorchair --- caseUC30
+  actoroperationsadmin --- caseUC30
+  actormitigationprevention --- caseUC30
+  actorpreparedness --- caseUC30
+  actorresponse --- caseUC30
+  actorrecoveryrehabilitation --- caseUC30
+  actorsafeTrack --- caseUC34A
+  actorevaTrack --- caseUC34A
+  actortrackingAid --- caseUC34A
+  actorchair --- caseUC34B
+  actoroperationsadmin --- caseUC34B
+  actormitigationprevention --- caseUC34B
+  actorpreparedness --- caseUC34B
+  actorresponse --- caseUC34B
+  actorrecoveryrehabilitation --- caseUC34B
+  actorsafeTrack --- caseUC34B
+  actorevaTrack --- caseUC34B
+  actortrackingAid --- caseUC34B
+  actorchair --- caseUC35
+  actoroperationsadmin --- caseUC35
+  actormitigationprevention --- caseUC35
+  actorpreparedness --- caseUC35
+  actorresponse --- caseUC35
+  actorrecoveryrehabilitation --- caseUC35
+  actorsafeTrack --- caseUC35
+  actorevaTrack --- caseUC35
+  actortrackingAid --- caseUC35
+  actorchair --- caseUC36
+  actoroperationsadmin --- caseUC36
+  actormitigationprevention --- caseUC36
+  actorpreparedness --- caseUC36
+  actorresponse --- caseUC36
+  actorrecoveryrehabilitation --- caseUC36

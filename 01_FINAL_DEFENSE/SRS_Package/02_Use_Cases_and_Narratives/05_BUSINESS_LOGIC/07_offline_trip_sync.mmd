@@ -1,0 +1,41 @@
+flowchart LR
+  subgraph lane0["Assigned rescuer"]
+    direction TB
+    start(["Open own assignment navigation"])
+    follow["Follow valid route and record supported trip events"]
+  end
+  subgraph lane1["API / Mobile client"]
+    direction TB
+    gate{"Authorized route data available?"}
+  end
+  subgraph lane2["Mobile client"]
+    direction TB
+    none(["Show route unavailable; do not fabricate a route"])
+    network{"Connected?"}
+    cached{"Compatible saved route/pack available?"}
+    ack(["Apply acknowledgments; retain failed/pending events"])
+  end
+  subgraph lane3["Map / routing provider"]
+    direction TB
+    route["Return an available route"]
+  end
+  subgraph lane4["Native local storage"]
+    direction TB
+    queue[("Retain pending navigation events until acknowledged")]
+  end
+  subgraph lane5["API"]
+    direction TB
+    sync["On reconnect, validate identity and event replay"]
+  end
+  start --> gate
+  gate -->|"No"| none
+  gate -->|"Yes"| network
+  network -->|"Yes"| route
+  network -->|"No"| cached
+  cached -->|"No"| none
+  cached -->|"Yes"| follow
+  route -->|"Route available"| follow
+  route -->|"Provider unavailable"| none
+  follow --> queue
+  queue -->|"When online"| sync
+  sync --> ack

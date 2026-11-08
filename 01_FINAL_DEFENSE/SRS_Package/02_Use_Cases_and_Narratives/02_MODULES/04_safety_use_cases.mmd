@@ -1,0 +1,13 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actorhouseholdresident["Actor: Household resident"]
+  actorsmsGateway["Actor: Configured SMS gateway"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC10(["UC-10: Report household or member safety"])
+    caseUC11(["UC-11: Connect and assist a trusted household"])
+    caseUC38(["UC-38: Report safety through a configured SMS gateway"])
+  end
+  actorhouseholdresident --- caseUC10
+  actorhouseholdresident --- caseUC11
+  actorhouseholdresident --- caseUC38
+  actorsmsGateway --- caseUC38

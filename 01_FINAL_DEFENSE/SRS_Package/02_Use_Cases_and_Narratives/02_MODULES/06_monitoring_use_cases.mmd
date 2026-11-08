@@ -1,0 +1,45 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actorchair["Actor: Chairperson"]
+  actormitigationprevention["Actor: Mitigation / Prevention"]
+  actoroperationsadmin["Actor: Operations / Admin"]
+  actorpreparedness["Actor: Preparedness"]
+  actorrecoveryrehabilitation["Actor: Recovery / Rehabilitation"]
+  actorresponse["Actor: Response personnel"]
+  actorweatherProvider["Actor: Weather / advisory provider"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC22A(["UC-22A: Monitor dashboard and operational summaries"])
+    caseUC22B(["UC-22B: Review maps, directory and weather"])
+    caseUC24(["UC-24: Review severity and hazard overlays"])
+    caseUC25A(["UC-25A: Review household safety reports"])
+    caseUC26A(["UC-26A: Inspect rescue priorities and historical criteria"])
+  end
+  actorchair --- caseUC22A
+  actoroperationsadmin --- caseUC22A
+  actormitigationprevention --- caseUC22A
+  actorpreparedness --- caseUC22A
+  actorresponse --- caseUC22A
+  actorrecoveryrehabilitation --- caseUC22A
+  actorchair --- caseUC22B
+  actoroperationsadmin --- caseUC22B
+  actormitigationprevention --- caseUC22B
+  actorpreparedness --- caseUC22B
+  actorresponse --- caseUC22B
+  actorrecoveryrehabilitation --- caseUC22B
+  actorweatherProvider --- caseUC22B
+  actorchair --- caseUC24
+  actoroperationsadmin --- caseUC24
+  actormitigationprevention --- caseUC24
+  actorpreparedness --- caseUC24
+  actorresponse --- caseUC24
+  actorrecoveryrehabilitation --- caseUC24
+  actorweatherProvider --- caseUC24
+  actorchair --- caseUC25A
+  actoroperationsadmin --- caseUC25A
+  actormitigationprevention --- caseUC25A
+  actorpreparedness --- caseUC25A
+  actorresponse --- caseUC25A
+  actorrecoveryrehabilitation --- caseUC25A
+  actorchair --- caseUC26A
+  actoroperationsadmin --- caseUC26A
+  actorresponse --- caseUC26A

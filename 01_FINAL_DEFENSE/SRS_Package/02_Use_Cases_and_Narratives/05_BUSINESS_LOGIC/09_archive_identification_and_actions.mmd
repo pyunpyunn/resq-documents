@@ -1,0 +1,38 @@
+flowchart LR
+  subgraph lane0["Authorized archive user"]
+    direction TB
+    start(["Choose archive category and event scope"])
+    action{"Choose archive action"}
+  end
+  subgraph lane1["API / archive service"]
+    direction TB
+    read["Load actual source IDs and snapshot metadata"]
+    validate{"Authorization and source IDs still valid?"}
+  end
+  subgraph lane2["Web client"]
+    direction TB
+    view["Show identities, status and recording availability"]
+    confirm{"Confirm explicit selected identities for deletion"}
+    keep(["Keep original records unchanged"])
+    error(["Show stale selection or access error"])
+    result(["Refresh actual archive results"])
+  end
+  subgraph lane3["Archive / report service"]
+    direction TB
+    export["Export selected records or save validated group"]
+  end
+  subgraph lane4["Archive service"]
+    direction TB
+    delete["Apply the implemented scoped deletion"]
+  end
+  start --> read
+  read --> view
+  view --> action
+  action -->|"Export / save group"| export
+  export --> result
+  action -->|"Delete"| confirm
+  confirm -->|"No"| keep
+  confirm -->|"Yes"| validate
+  validate -->|"No"| error
+  validate -->|"Yes"| delete
+  delete --> result

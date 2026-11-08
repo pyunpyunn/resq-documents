@@ -1,0 +1,28 @@
+flowchart LR
+  subgraph lane0["Authorized HQ user"]
+    direction TB
+    start(["Open permitted monitoring module"])
+  end
+  subgraph lane1["API"]
+    direction TB
+    gate{"Module access allowed?"}
+    derive["Calculate summaries and versioned history"]
+    ready{"Data/provider available?"}
+  end
+  subgraph lane2["Web client"]
+    direction TB
+    deny(["Show access denied"])
+    none(["Show empty, unavailable or error state"])
+    view(["Display real labels, maps and charts"])
+  end
+  subgraph lane3["Operational data"]
+    direction TB
+    read[("Read scoped events, statuses and report evidence")]
+  end
+  start --> gate
+  gate -->|"No"| deny
+  gate -->|"Yes"| read
+  read --> derive
+  derive --> ready
+  ready -->|"No"| none
+  ready -->|"Yes"| view

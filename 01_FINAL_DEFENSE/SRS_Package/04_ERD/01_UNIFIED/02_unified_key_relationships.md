@@ -1,0 +1,716 @@
+# Unified key relationship overview
+
+Source: shared_db, 2026-10-31T13:37:40+08:00. 106 objects; 174 enforced relationships; 315 displayed columns.
+
+Same complete object/relationship scope as the full ERD, with attributes reduced to keys.
+
+Presentation view: keys and selected business fields only. Context tables can have additional relationships outside this module; use the unified ERD for those.
+
+```mermaid
+erDiagram
+  direction LR
+  %% Physical FKs only; views and independent stores receive no invented links.
+  archiveOrphanHouseholdDisasters["_archive_orphan_household_disasters (LEGACY RECOVERY)"] {
+    int household_disaster_id PK
+  }
+  archiveOrphanHouseholdStatusLogs["_archive_orphan_household_status_logs (LEGACY RECOVERY)"] {
+    int status_log_id PK
+  }
+  accommodationTypes["accommodation_types (SHARED DEPENDENCY)"] {
+    int type_id PK
+    string type_key UK
+  }
+  accommodationUnits["accommodation_units (SHARED DEPENDENCY)"] {
+    int unit_id PK
+    string center_id FK
+    int type_id FK
+  }
+  addresses["addresses (SHARED DEPENDENCY)"] {
+    int address_id PK
+    int barangay_id FK
+    int sitio_id FK
+    int purok_id FK
+    int zipcode_id FK
+  }
+  affectedAreas["affected_areas (RESQ MAPPING)"] {
+    int affected_area_id PK
+    string disaster_id FK
+    int severity_id FK
+    int purok_id FK
+    int sitio_id FK
+    int barangay_id FK
+  }
+  auditLogs["audit_logs (SHARED DEPENDENCY)"] {
+    int audit_log_id PK
+    string user_id FK
+  }
+  barangayBoundaries["barangay_boundaries (RESQ MAPPING)"] {
+    string psgc_code PK
+    int barangay_id FK
+  }
+  barangays["barangays (SHARED DEPENDENCY)"] {
+    int barangay_id PK
+    string barangay_code UK
+    int city_id FK
+  }
+  cache["cache (SHARED FRAMEWORK)"] {
+    string key PK
+  }
+  cacheLocks["cache_locks (SHARED FRAMEWORK)"] {
+    string key PK
+  }
+  cachedRoutes["cached_routes (RESQ MAPPING)"] {
+    int id PK
+    int team_id FK
+    string household_id FK
+    string evac_center_id FK
+  }
+  cities["cities (SHARED DEPENDENCY)"] {
+    int city_id PK
+    string city_code UK
+    int province_id FK
+  }
+  civilStatuses["civil_statuses (SHARED DEPENDENCY)"] {
+    int status_id PK
+    string status_key UK
+  }
+  deviceTokens["device_tokens (SHARED DEPENDENCY)"] {
+    int id PK
+    string household_id FK
+    string member_id FK
+    string user_id FK
+    int team_id FK
+    int selection_token_id FK
+    int responder_id FK
+  }
+  deviceTrackingLogs["device_tracking_logs (RESQ MAPPING)"] {
+    int tracking_id PK
+    int device_token_id FK
+    string household_id FK
+    string member_id FK
+  }
+  disasterBroadcasts["disaster_broadcasts (RESQ MAPPING)"] {
+    int broadcast_id PK
+    string disaster_id FK
+    int severity_id FK
+    int notification_id FK
+    int weather_log_id FK
+  }
+  disasterEventTypes["disaster_event_types (SHARED DEPENDENCY)"] {
+    int event_type_id PK
+    string event_id FK
+    int type_id FK
+  }
+  disasterEvents["disaster_events (SHARED DEPENDENCY)"] {
+    string event_id PK
+    int type_id FK
+    int severity_level_id FK
+  }
+  disasterTypes["disaster_types (SHARED DEPENDENCY)"] {
+    int type_id PK
+    string type_code UK
+  }
+  dispatchStatuses["dispatch_statuses (RESQ MAPPING)"] {
+    string status_key PK
+    string status_code UK
+  }
+  dispatchTrips["dispatch_trips (RESQ MAPPING)"] {
+    int id PK
+    int dispatch_id FK
+    int team_id FK
+    int device_id FK
+  }
+  educationLevels["education_levels (SHARED DEPENDENCY)"] {
+    int education_level_id PK
+    string education_level_key UK
+  }
+  evacuationCenters["evacuation_centers (SHARED DEPENDENCY)"] {
+    string evacuation_center_id PK
+    string current_event_id FK
+  }
+  evacuationRecords["evacuation_records (SHARED DEPENDENCY)"] {
+    int evacuation_id PK
+    string event_id FK
+    string household_id FK
+    string center_id FK
+    int household_status_id FK
+    string verified_by FK
+  }
+  externalReportRequests["external_report_requests (RESQ MAPPING)"] {
+    string id PK
+    string event_id FK
+  }
+  failedJobs["failed_jobs (SHARED FRAMEWORK)"] {
+    int id PK
+    string uuid UK
+  }
+  fieldReportCategories["field_report_categories (RESQ MAPPING)"] {
+    int category_id PK
+    string category_key UK
+  }
+  genders["genders (SHARED DEPENDENCY)"] {
+    int gender_id PK
+    string gender_key UK
+  }
+  geotaggedLocations["geotagged_locations (SHARED DEPENDENCY)"] {
+    int location_id PK
+    string household_id FK
+    string verified_by_user_id FK
+  }
+  householdDisasters["household_disasters (RESQ MAPPING)"] {
+    int household_disaster_id PK
+    string household_id FK
+    string disaster_id FK
+    int initial_status_id FK
+    int current_status_id FK
+  }
+  householdGeographicClassifications["household_geographic_classifications (RESQ MAPPING)"] {
+    string household_id PK,FK
+    int sitio_id FK
+    int purok_id FK
+  }
+  householdMembers["household_members (SHARED DEPENDENCY)"] {
+    string member_id PK
+    string household_id FK
+    int gender_id FK
+    int relationship_id FK
+    int civil_status_id FK
+    int occupation FK
+    int education_level_id FK
+  }
+  householdMobileNotifications["household_mobile_notifications (RESQ MAPPING)"] {
+    int notification_id PK
+    string household_id FK
+  }
+  householdStatusLogs["household_status_logs (RESQ MAPPING)"] {
+    int status_log_id PK
+    string disaster_id FK
+    string household_id FK
+    int status_id FK
+  }
+  householdStatuses["household_statuses (SHARED DEPENDENCY)"] {
+    int status_id PK
+    string status_key UK
+  }
+  householdTrustedPins["household_trusted_pins (RESQ MAPPING)"] {
+    string household_id PK,FK
+  }
+  households["households (SHARED DEPENDENCY)"] {
+    string household_id PK
+    string household_code UK
+    string created_by FK
+    int address_id FK
+    string login_user_id FK
+  }
+  hqFieldReports["hq_field_reports (RESQ MAPPING)"] {
+    int hq_report_id PK
+    string disaster_id FK
+    string household_id FK
+    int linked_report_id FK
+  }
+  incidentArchives["incident_archives (RESQ MAPPING)"] {
+    int archive_id PK
+    string disaster_id FK
+    string archived_by_admin_id FK
+  }
+  jobBatches["job_batches (SHARED FRAMEWORK)"] {
+    string id PK
+  }
+  jobs["jobs (SHARED FRAMEWORK)"] {
+    int id PK
+  }
+  landingInquiries["landing_inquiries (RESQ MAPPING)"] {
+    int inquiry_id PK
+    string handled_by_user_id FK
+  }
+  mapTileMetadata["map_tile_metadata (RESQ MAPPING)"] {
+    int tile_id PK
+  }
+  mappingHazardLayers["mapping_hazard_layers (RESQ MAPPING)"] {
+    int id PK
+    int barangay_id FK
+  }
+  memberDisasterStatuses["member_disaster_statuses (RESQ MAPPING)"] {
+    int member_status_id PK
+    string disaster_id FK
+    string household_id FK
+    string member_id FK
+    int status_id FK
+    int previous_status_id FK
+  }
+  memberStatusLogs["member_status_logs (RESQ MAPPING)"] {
+    int member_status_log_id PK
+    string disaster_id FK
+    string household_id FK
+    string member_id FK
+    int from_status_id FK
+    int to_status_id FK
+    string reported_by_user_id FK
+    string reported_by_member_id FK
+    int responder_id FK
+    int device_token_id FK
+  }
+  memberStatuses["member_statuses (RESQ MAPPING)"] {
+    int status_id PK
+    string status_key UK
+  }
+  memberVulnerableGroups["member_vulnerable_groups (SHARED DEPENDENCY)"] {
+    int id PK
+    string member_id FK
+    int vulnerable_group_id FK
+  }
+  migrations["migrations (SHARED FRAMEWORK)"] {
+    int id PK
+  }
+  notifications["notifications (SHARED DEPENDENCY)"] {
+    int notif_id PK
+    string sent_by FK
+    string evacuation_event_id FK
+    string evacuation_center_id FK
+    int recurrence_type_id FK
+    string source_key UK
+    string advisory_fingerprint UK
+  }
+  occupations["occupations (SHARED DEPENDENCY)"] {
+    int occuaption_id PK
+  }
+  offlinePacks["offline_packs (RESQ MAPPING)"] {
+    string version PK
+  }
+  operationalSequences["operational_sequences (RESQ MAPPING)"] {
+    string sequence_key PK
+  }
+  passwordResetRequests["password_reset_requests (RESQ MAPPING)"] {
+    string request_id PK
+    string user_id FK
+    string token_hash UK
+    string otp_subject_key UK
+    string household_id FK
+  }
+  passwordResetTokens["password_reset_tokens (SHARED FRAMEWORK)"] {
+    string email PK
+  }
+  personalAccessTokens["personal_access_tokens (SHARED DEPENDENCY)"] {
+    int id PK
+    string token UK
+  }
+  propertyDamageLevels["property_damage_levels (RESQ MAPPING)"] {
+    string damage_key PK
+  }
+  provinces["provinces (SHARED DEPENDENCY)"] {
+    int province_id PK
+    string province_code UK
+    int region_id FK
+  }
+  purokBoundaries["purok_boundaries (RESQ MAPPING)"] {
+    int purok_id PK,FK
+  }
+  puroks["puroks (SHARED DEPENDENCY)"] {
+    int purok_id PK
+    int sitio_id FK
+  }
+  realtimeOutbox["realtime_outbox (RESQ MAPPING)"] {
+    int id PK
+  }
+  recurrenceTypes["recurrence_types (SHARED DEPENDENCY)"] {
+    int type_id PK
+    string type_key UK
+  }
+  regions["regions (SHARED DEPENDENCY)"] {
+    int region_id PK
+    string region_code UK
+  }
+  relationships["relationships (SHARED DEPENDENCY)"] {
+    int relationship_id PK
+    string relationship_key UK
+  }
+  rememberedDevices["remembered_devices (RESQ MAPPING)"] {
+    string remembered_device_id PK
+    string user_id FK
+    string token_hash UK
+  }
+  reportIdempotency["report_idempotency (RESQ MAPPING)"] {
+    string scope PK
+  }
+  requestValidations["request_validations (RESQ MAPPING)"] {
+    int validation_id PK
+    string request_id FK
+    string validator_user_id FK
+  }
+  rescueCriteriaContactBaselines["rescue_criteria_contact_baselines (RESQ MAPPING)"] {
+    string event_id PK,FK
+    string household_id PK,FK
+  }
+  rescueCriteriaLineSnapshots["rescue_criteria_line_snapshots (RESQ MAPPING)"] {
+    int id PK
+    string event_id FK
+    int rescue_priority_version FK
+  }
+  rescueCriteriaSnapshots["rescue_criteria_snapshots (RESQ MAPPING)"] {
+    int id PK
+    string event_id FK
+    int rescue_priority_version FK
+  }
+  rescuePrioritySettings["rescue_priority_settings (RESQ MAPPING)"] {
+    int version PK
+    string updated_by_user_id FK
+  }
+  rescueTeams["rescue_teams (RESQ MAPPING)"] {
+    int team_id PK
+    string team_code UK
+    int assigned_purok_id FK
+    int leader_responder_id FK
+  }
+  resourceRequestStatus["resource_request_status (SHARED DEPENDENCY)"] {
+    int status_id PK
+    string status_key UK
+  }
+  resourceRequests["resource_requests (SHARED DEPENDENCY)"] {
+    string request_id PK
+    string evacuation_center_id FK
+    string requested_by FK
+    string handled_by FK
+    int status_id FK
+    string validated_by_user_id FK
+    int urgency_id FK
+  }
+  responderAssignments["responder_assignments (RESQ MAPPING)"] {
+    int assignment_id PK
+    string assignment_code UK
+    int responder_id FK
+    int team_id FK
+    string disaster_id FK
+    int affected_area_id FK
+    string household_id FK
+    string status FK
+  }
+  responderCheckIns["responder_check_ins (RESQ MAPPING)"] {
+    int check_in_id PK
+    int responder_id FK
+    string disaster_id FK
+    int team_id FK
+    int affected_area_id FK
+    string household_id FK
+    string member_id FK
+  }
+  responderCommunicationLogs["responder_communication_logs (RESQ MAPPING)"] {
+    int communication_id PK
+    int responder_id FK
+    int team_id FK
+    string disaster_id FK
+  }
+  responderFieldReportDetails["responder_field_report_details (RESQ MAPPING)"] {
+    int detail_id PK
+    int report_id FK
+    int category_id FK
+  }
+  responderFieldReportMembers["responder_field_report_members (RESQ MAPPING)"] {
+    int detail_id PK
+    int report_id FK
+    string household_id FK
+    string disaster_id FK
+    string member_id FK
+    int status_id FK
+  }
+  responderFieldReports["responder_field_reports (RESQ MAPPING)"] {
+    int report_id PK
+    int responder_id FK
+    string disaster_id FK
+    string household_id FK
+    int assignment_id FK
+    int status_log_id FK
+    string property_damage FK
+    string idempotency_key UK
+  }
+  responderLocationLogs["responder_location_logs (RESQ MAPPING)"] {
+    int log_id PK
+    int responder_id FK
+  }
+  responderRoutes["responder_routes (RESQ MAPPING)"] {
+    int route_id PK
+    int assignment_id FK
+    int responder_id FK
+    string household_id FK
+  }
+  responders["responders (RESQ MAPPING)"] {
+    int responder_id PK
+    string user_id FK
+    string responder_code UK
+    int team_id FK
+  }
+  resqOrphanReferences["resq_orphan_references (RESQ MAPPING)"] {
+    int id PK
+  }
+  roles["roles (SHARED DEPENDENCY)"] {
+    int role_id PK
+    string role_key UK
+  }
+  routeCoordinates["route_coordinates (RESQ MAPPING)"] {
+    int coordinate_id PK
+    int route_id FK
+  }
+  sessions["sessions (SHARED FRAMEWORK)"] {
+    string id PK
+  }
+  severityLevels["severity_levels (SHARED DEPENDENCY)"] {
+    int severity_id PK
+    string severity_key UK
+  }
+  sitios["sitios (SHARED DEPENDENCY)"] {
+    int sitio_id PK
+    int barangay_id FK
+  }
+  situationReportSubmissions["situation_report_submissions (RESQ MAPPING)"] {
+    int id PK
+    int sit_rep_id FK
+  }
+  situationReports["situation_reports (RESQ MAPPING)"] {
+    int sit_rep_id PK
+    string report_number UK
+    string disaster_id FK
+    string household_id FK
+  }
+  statusReminders["status_reminders (RESQ MAPPING)"] {
+    int reminder_id PK
+    string event_id FK
+    string household_id FK
+    string member_id FK
+  }
+  syncEvents["sync_events (RESQ MAPPING)"] {
+    int id PK
+    string client_event_id UK
+    int device_id FK
+  }
+  tripPoints["trip_points (RESQ MAPPING)"] {
+    int id PK
+    int trip_id FK
+  }
+  trustedHouseholds["trusted_households (RESQ MAPPING)"] {
+    string connection_id PK
+    string requesting_household_id FK
+    string trusted_household_id FK
+  }
+  urgencyLevels["urgency_levels (RESQ MAPPING)"] {
+    int urgency_id PK
+    string urgency_key UK
+  }
+  userNotifications["user_notifications (RESQ MAPPING)"] {
+    int id PK
+    string user_id FK
+  }
+  users["users (SHARED DEPENDENCY)"] {
+    string user_id PK
+    int role_id FK
+    string assigned_center_id FK
+    string household_id FK
+    string member_id FK,UK
+  }
+  vHouseholdStatusBoard["v_household_status_board (VIEW)"] {
+    string disaster_id
+    string household_id
+    string household_code
+  }
+  vMemberStatusMonitor["v_member_status_monitor (VIEW)"] {
+    int member_status_id
+    string disaster_id
+    string event_name
+  }
+  vulnerableGroups["vulnerable_groups (SHARED DEPENDENCY)"] {
+    int vulnerable_group_id PK
+    string vulnerable_group_key UK
+  }
+  weatherLogs["weather_logs (RESQ MAPPING)"] {
+    int weather_log_id PK
+    string disaster_id FK
+  }
+  webPushDeliveries["web_push_deliveries (RESQ MAPPING)"] {
+    int id PK
+    int subscription_id FK
+  }
+  webPushSubscriptions["web_push_subscriptions (RESQ MAPPING)"] {
+    int id PK
+    string user_id FK
+    int token_id FK
+    string endpoint_hash UK
+  }
+  zipcodes["zipcodes (SHARED DEPENDENCY)"] {
+    int zipcode_id PK
+    int city_id FK
+  }
+  evacuationCenters |o..o{ accommodationUnits : "center_id"
+  accommodationTypes |o..o{ accommodationUnits : "type_id"
+  barangays |o..o{ addresses : "barangay_id"
+  puroks |o..o{ addresses : "purok_id"
+  sitios |o..o{ addresses : "sitio_id"
+  zipcodes |o..o{ addresses : "zipcode_id"
+  barangays |o..o{ affectedAreas : "barangay_id"
+  disasterEvents |o..o{ affectedAreas : "disaster_id"
+  puroks |o..o{ affectedAreas : "purok_id"
+  severityLevels |o..o{ affectedAreas : "severity_id"
+  sitios |o..o{ affectedAreas : "sitio_id"
+  users |o..o{ auditLogs : "user_id"
+  barangays |o..o{ barangayBoundaries : "barangay_id"
+  cities ||..o{ barangays : "city_id"
+  evacuationCenters |o..o{ cachedRoutes : "evac_center_id"
+  households |o..o{ cachedRoutes : "household_id"
+  rescueTeams ||..o{ cachedRoutes : "team_id"
+  provinces ||..o{ cities : "province_id"
+  households |o..o{ deviceTokens : "REDACTED"
+  householdMembers |o..o{ deviceTokens : "REDACTED"
+  responders |o..o{ deviceTokens : "REDACTED"
+  rescueTeams |o..o{ deviceTokens : "REDACTED"
+  users |o..o{ deviceTokens : "REDACTED"
+  personalAccessTokens |o..o{ deviceTokens : "REDACTED"
+  households |o..o{ deviceTrackingLogs : "household_id"
+  householdMembers |o..o{ deviceTrackingLogs : "member_id"
+  deviceTokens |o..o{ deviceTrackingLogs : "device_token_id"
+  disasterEvents |o..o{ disasterBroadcasts : "disaster_id"
+  notifications |o..o{ disasterBroadcasts : "notification_id"
+  severityLevels |o..o{ disasterBroadcasts : "severity_id"
+  weatherLogs |o..o{ disasterBroadcasts : "weather_log_id"
+  disasterEvents |o..o{ disasterEventTypes : "event_id"
+  disasterTypes ||..o{ disasterEventTypes : "type_id"
+  severityLevels |o..o{ disasterEvents : "severity_level_id"
+  disasterTypes ||..o{ disasterEvents : "type_id"
+  deviceTokens ||..o{ dispatchTrips : "device_id"
+  responderAssignments ||..o{ dispatchTrips : "dispatch_id"
+  rescueTeams ||..o{ dispatchTrips : "team_id"
+  disasterEvents |o..o{ evacuationCenters : "current_event_id"
+  evacuationCenters |o..o{ evacuationRecords : "center_id"
+  disasterEvents |o..o{ evacuationRecords : "event_id"
+  households |o..o{ evacuationRecords : "household_id"
+  householdStatuses |o..o{ evacuationRecords : "household_status_id"
+  users |o..o{ evacuationRecords : "verified_by"
+  disasterEvents |o..o{ externalReportRequests : "event_id"
+  households |o..o{ geotaggedLocations : "household_id"
+  users |o..o{ geotaggedLocations : "verified_by_user_id"
+  disasterEvents |o..o{ householdDisasters : "disaster_id"
+  households |o..o{ householdDisasters : "household_id"
+  householdStatuses |o..o{ householdDisasters : "initial_status_id"
+  householdStatuses |o..o{ householdDisasters : "current_status_id"
+  households ||--o| householdGeographicClassifications : "household_id"
+  puroks |o..o{ householdGeographicClassifications : "purok_id"
+  sitios |o..o{ householdGeographicClassifications : "sitio_id"
+  civilStatuses |o..o{ householdMembers : "civil_status_id"
+  educationLevels |o..o{ householdMembers : "education_level_id"
+  genders |o..o{ householdMembers : "gender_id"
+  households |o..o{ householdMembers : "household_id"
+  occupations |o..o{ householdMembers : "occupation"
+  relationships |o..o{ householdMembers : "relationship_id"
+  households ||..o{ householdMobileNotifications : "household_id"
+  disasterEvents |o..o{ householdStatusLogs : "disaster_id"
+  households ||..o{ householdStatusLogs : "household_id"
+  householdStatuses ||..o{ householdStatusLogs : "status_id"
+  households ||--o| householdTrustedPins : "household_id"
+  addresses |o..o{ households : "address_id"
+  users |o..o{ households : "created_by"
+  users |o..o{ households : "login_user_id"
+  disasterEvents |o..o{ hqFieldReports : "disaster_id"
+  households |o..o{ hqFieldReports : "household_id"
+  responderFieldReports ||..o{ hqFieldReports : "linked_report_id"
+  users |o..o{ incidentArchives : "archived_by_admin_id"
+  disasterEvents |o..o{ incidentArchives : "disaster_id"
+  users |o..o{ landingInquiries : "handled_by_user_id"
+  barangays ||..o{ mappingHazardLayers : "barangay_id"
+  disasterEvents ||..o{ memberDisasterStatuses : "disaster_id"
+  households ||..o{ memberDisasterStatuses : "household_id"
+  householdMembers ||..o{ memberDisasterStatuses : "member_id"
+  memberStatuses |o..o{ memberDisasterStatuses : "previous_status_id"
+  memberStatuses ||..o{ memberDisasterStatuses : "status_id"
+  responders |o..o{ memberStatusLogs : "responder_id"
+  householdMembers |o..o{ memberStatusLogs : "reported_by_member_id"
+  householdMembers ||..o{ memberStatusLogs : "member_id"
+  memberStatuses |o..o{ memberStatusLogs : "from_status_id"
+  users |o..o{ memberStatusLogs : "reported_by_user_id"
+  deviceTokens |o..o{ memberStatusLogs : "device_token_id"
+  memberStatuses ||..o{ memberStatusLogs : "to_status_id"
+  disasterEvents ||..o{ memberStatusLogs : "disaster_id"
+  households ||..o{ memberStatusLogs : "household_id"
+  vulnerableGroups ||..o{ memberVulnerableGroups : "vulnerable_group_id"
+  householdMembers |o..o{ memberVulnerableGroups : "member_id"
+  evacuationCenters |o..o{ notifications : "evacuation_center_id"
+  disasterEvents |o..o{ notifications : "evacuation_event_id"
+  recurrenceTypes |o..o{ notifications : "recurrence_type_id"
+  users |o..o{ notifications : "sent_by"
+  users |o..o{ passwordResetRequests : "user_id"
+  households |o..o{ passwordResetRequests : "household_id"
+  regions ||..o{ provinces : "region_id"
+  puroks ||--o| purokBoundaries : "purok_id"
+  sitios ||..o{ puroks : "sitio_id"
+  users ||..o{ rememberedDevices : "user_id"
+  resourceRequests ||..o{ requestValidations : "request_id"
+  users |o..o{ requestValidations : "validator_user_id"
+  disasterEvents ||--o{ rescueCriteriaContactBaselines : "event_id"
+  households ||--o{ rescueCriteriaContactBaselines : "household_id"
+  rescuePrioritySettings |o..o{ rescueCriteriaLineSnapshots : "rescue_priority_version"
+  disasterEvents ||..o{ rescueCriteriaLineSnapshots : "event_id"
+  rescuePrioritySettings |o..o{ rescueCriteriaSnapshots : "rescue_priority_version"
+  disasterEvents ||..o{ rescueCriteriaSnapshots : "event_id"
+  users |o..o{ rescuePrioritySettings : "updated_by_user_id"
+  puroks |o..o{ rescueTeams : "assigned_purok_id"
+  responders |o..o{ rescueTeams : "leader_responder_id"
+  evacuationCenters |o..o{ resourceRequests : "evacuation_center_id"
+  users |o..o{ resourceRequests : "handled_by"
+  users |o..o{ resourceRequests : "requested_by"
+  resourceRequestStatus |o..o{ resourceRequests : "status_id"
+  users |o..o{ resourceRequests : "validated_by_user_id"
+  urgencyLevels |o..o{ resourceRequests : "urgency_id"
+  disasterEvents |o..o{ responderAssignments : "disaster_id"
+  households |o..o{ responderAssignments : "household_id"
+  responders ||..o{ responderAssignments : "responder_id"
+  dispatchStatuses |o..o{ responderAssignments : "status"
+  rescueTeams |o..o{ responderAssignments : "team_id"
+  affectedAreas |o..o{ responderAssignments : "affected_area_id"
+  disasterEvents |o..o{ responderCheckIns : "disaster_id"
+  households |o..o{ responderCheckIns : "household_id"
+  responders ||..o{ responderCheckIns : "responder_id"
+  rescueTeams |o..o{ responderCheckIns : "team_id"
+  householdMembers |o..o{ responderCheckIns : "member_id"
+  affectedAreas |o..o{ responderCheckIns : "affected_area_id"
+  disasterEvents |o..o{ responderCommunicationLogs : "disaster_id"
+  responders ||..o{ responderCommunicationLogs : "responder_id"
+  rescueTeams |o..o{ responderCommunicationLogs : "team_id"
+  fieldReportCategories ||..o{ responderFieldReportDetails : "category_id"
+  responderFieldReports ||..o{ responderFieldReportDetails : "report_id"
+  disasterEvents ||..o{ responderFieldReportMembers : "disaster_id"
+  households ||..o{ responderFieldReportMembers : "household_id"
+  householdMembers ||..o{ responderFieldReportMembers : "member_id"
+  responderFieldReports ||..o{ responderFieldReportMembers : "report_id"
+  memberStatuses |o..o{ responderFieldReportMembers : "status_id"
+  responderAssignments |o..o{ responderFieldReports : "assignment_id"
+  disasterEvents |o..o{ responderFieldReports : "disaster_id"
+  households |o..o{ responderFieldReports : "household_id"
+  responders ||..o{ responderFieldReports : "responder_id"
+  propertyDamageLevels |o..o{ responderFieldReports : "property_damage"
+  householdStatusLogs |o..o{ responderFieldReports : "status_log_id"
+  responders ||..o{ responderLocationLogs : "responder_id"
+  responderAssignments ||..o{ responderRoutes : "assignment_id"
+  households |o..o{ responderRoutes : "household_id"
+  responders |o..o{ responderRoutes : "responder_id"
+  rescueTeams |o..o{ responders : "team_id"
+  users |o..o{ responders : "user_id"
+  responderRoutes ||..o{ routeCoordinates : "route_id"
+  barangays ||..o{ sitios : "barangay_id"
+  situationReports ||..o{ situationReportSubmissions : "sit_rep_id"
+  disasterEvents |o..o{ situationReports : "disaster_id"
+  households |o..o{ situationReports : "household_id"
+  disasterEvents ||..o{ statusReminders : "event_id"
+  households ||..o{ statusReminders : "household_id"
+  householdMembers ||..o{ statusReminders : "member_id"
+  deviceTokens ||..o{ syncEvents : "device_id"
+  dispatchTrips ||..o{ tripPoints : "trip_id"
+  households ||..o{ trustedHouseholds : "requesting_household_id"
+  households ||..o{ trustedHouseholds : "trusted_household_id"
+  users ||..o{ userNotifications : "user_id"
+  evacuationCenters |o..o{ users : "assigned_center_id"
+  households |o..o{ users : "household_id"
+  householdMembers |o..o| users : "member_id"
+  roles |o..o{ users : "role_id"
+  disasterEvents |o..o{ weatherLogs : "disaster_id"
+  webPushSubscriptions ||..o{ webPushDeliveries : "subscription_id"
+  users ||..o{ webPushSubscriptions : "user_id"
+  personalAccessTokens |o..o{ webPushSubscriptions : "token_id"
+  cities ||..o{ zipcodes : "city_id"
+```
+
+[Raw Mermaid](02_unified_key_relationships.mmd) | [Diagram index](../00_README.md)

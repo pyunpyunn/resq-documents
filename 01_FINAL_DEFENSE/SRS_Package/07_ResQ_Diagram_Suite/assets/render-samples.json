@@ -1,0 +1,86 @@
+[
+  {
+    "relative": "01_ERD/02_Compacted/compacted_system.svg",
+    "hash": "9234d088a11f8248007a8ede6be9a1795d0a1cea09d51ad637c02593c526f4af",
+    "output": "C:/backend/G10CAPSTONE/documents/01_FINAL_DEFENSE/SRS_Package/07_ResQ_Diagram_Suite/01_ERD/02_Compacted/compacted_system.png",
+    "scale": 1.971090329811877,
+    "width": 5409,
+    "height": 14791,
+    "clipped": [],
+    "tableOverflow": [],
+    "font": true,
+    "textElements": 1098
+  },
+  {
+    "relative": "02_Use_Case/02_Compacted/compacted_system.svg",
+    "hash": "2ef87d6ab9437fdde761eb81a55889fda60f09bca78b8672fc68f35841105786",
+    "output": "C:/backend/G10CAPSTONE/documents/01_FINAL_DEFENSE/SRS_Package/07_ResQ_Diagram_Suite/02_Use_Case/02_Compacted/compacted_system.png",
+    "scale": 3,
+    "width": 5640,
+    "height": 4272,
+    "clipped": [],
+    "tableOverflow": [],
+    "font": true,
+    "textElements": 37
+  },
+  {
+    "relative": "03_Flow_Chart/02_Compacted/compacted_system.svg",
+    "hash": "3a79c137fa6f899d54bfba94456dc535da52c320aa3fd1247eba581436675765",
+    "output": "C:/backend/G10CAPSTONE/documents/01_FINAL_DEFENSE/SRS_Package/07_ResQ_Diagram_Suite/03_Flow_Chart/02_Compacted/compacted_system.png",
+    "scale": 3,
+    "width": 2448,
+    "height": 3600,
+    "clipped": [],
+    "tableOverflow": [],
+    "font": true,
+    "textElements": 12
+  },
+  {
+    "relative": "04_Swim_Lane/02_Compacted/compacted_system.svg",
+    "hash": "512eff7ca238de46ded6be5a7e286c664ddaffbfb1db447da95bc7701671b099",
+    "output": "C:/backend/G10CAPSTONE/documents/01_FINAL_DEFENSE/SRS_Package/07_ResQ_Diagram_Suite/04_Swim_Lane/02_Compacted/compacted_system.png",
+    "scale": 3,
+    "width": 8808,
+    "height": 5352,
+    "clipped": [],
+    "tableOverflow": [],
+    "font": true,
+    "textElements": 37
+  },
+  {
+    "relative": "05_Data_Flow/02_Compacted/compacted_system.svg",
+    "hash": "b750f1709f3db7960a90fa135f8fb2e61dc347e1da236ecd95ae1b6cfd258e9d",
+    "output": "C:/backend/G10CAPSTONE/documents/01_FINAL_DEFENSE/SRS_Package/07_ResQ_Diagram_Suite/05_Data_Flow/02_Compacted/compacted_system.png",
+    "scale": 3,
+    "width": 6216,
+    "height": 4056,
+    "clipped": [],
+    "tableOverflow": [],
+    "font": true,
+    "textElements": 86
+  },
+  {
+    "relative": "06_System_Architecture/02_Compacted/compacted_system.svg",
+    "hash": "d43910b970c260a560c66ca7da4736a7e87260323d76c9d12199bd7a2b560e16",
+    "output": "C:/backend/G10CAPSTONE/documents/01_FINAL_DEFENSE/SRS_Package/07_ResQ_Diagram_Suite/06_System_Architecture/02_Compacted/compacted_system.png",
+    "scale": 3,
+    "width": 6576,
+    "height": 3816,
+    "clipped": [],
+    "tableOverflow": [],
+    "font": true,
+    "textElements": 42
+  },
+  {
+    "relative": "07_Tech_Stack/02_Compacted/compacted_system.svg",
+    "hash": "70b1eb7b5209ef7e3eb33147c3aaee0234f25780b6d31d2aaa656e4c9b039c8e",
+    "output": "C:/backend/G10CAPSTONE/documents/01_FINAL_DEFENSE/SRS_Package/07_ResQ_Diagram_Suite/07_Tech_Stack/02_Compacted/compacted_system.png",
+    "scale": 3,
+    "width": 5712,
+    "height": 2952,
+    "clipped": [],
+    "tableOverflow": [],
+    "font": true,
+    "textElements": 24
+  }
+]

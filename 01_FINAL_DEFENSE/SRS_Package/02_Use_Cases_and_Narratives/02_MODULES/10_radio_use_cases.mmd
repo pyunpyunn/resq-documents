@@ -1,0 +1,16 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actorchair["Actor: Chairperson"]
+  actoroperationsadmin["Actor: Operations / Admin"]
+  actorresponse["Actor: Response personnel"]
+  actortl["Actor: Rescuer team leader"]
+  actortm["Actor: Rescuer team member"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC20A(["UC-20A: Communicate using internet PTT and clips"])
+    caseUC20B(["UC-20B: Monitor rescue communications"])
+  end
+  actortl --- caseUC20A
+  actortm --- caseUC20A
+  actorchair --- caseUC20B
+  actoroperationsadmin --- caseUC20B
+  actorresponse --- caseUC20B

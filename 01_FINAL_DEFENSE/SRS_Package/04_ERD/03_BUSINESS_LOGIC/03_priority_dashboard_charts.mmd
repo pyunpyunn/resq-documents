@@ -1,0 +1,203 @@
+erDiagram
+  direction LR
+  %% Physical FKs only; views and independent stores receive no invented links.
+  addresses["addresses (SHARED DEPENDENCY)"] {
+    int address_id PK
+    int barangay_id FK
+    int sitio_id FK
+    int purok_id FK
+    int zipcode_id FK
+    datetime created_at
+  }
+  barangays["barangays (SHARED DEPENDENCY)"] {
+    int barangay_id PK
+    string barangay_code UK
+    int city_id FK
+  }
+  civilStatuses["civil_statuses (SHARED DEPENDENCY)"] {
+    int status_id PK
+    string status_key UK
+    string status_label
+  }
+  disasterEvents["disaster_events (SHARED DEPENDENCY)"] {
+    string event_id PK
+    string name
+    int type_id FK
+    int severity_level_id FK
+    datetime created_at
+  }
+  disasterTypes["disaster_types (SHARED DEPENDENCY)"] {
+    int type_id PK
+    string type_code UK
+    boolean is_active
+    datetime created_at
+  }
+  educationLevels["education_levels (SHARED DEPENDENCY)"] {
+    int education_level_id PK
+    string education_level_key UK
+  }
+  genders["genders (SHARED DEPENDENCY)"] {
+    int gender_id PK
+    string gender_key UK
+  }
+  householdDisasters["household_disasters (RESQ MAPPING)"] {
+    int household_disaster_id PK
+    string household_id FK
+    string disaster_id FK
+    int initial_status_id FK
+    int current_status_id FK
+    string priority_level
+    datetime created_at
+  }
+  householdMembers["household_members (SHARED DEPENDENCY)"] {
+    string member_id PK
+    string household_id FK
+    string first_name
+    string last_name
+    int gender_id FK
+    int relationship_id FK
+    int civil_status_id FK
+    int occupation FK
+    int education_level_id FK
+    datetime created_at
+    string name
+  }
+  householdStatuses["household_statuses (SHARED DEPENDENCY)"] {
+    int status_id PK
+    string status_key UK
+    string status_label
+    boolean is_active
+  }
+  households["households (SHARED DEPENDENCY)"] {
+    string household_id PK
+    string household_code UK
+    string household_name
+    string created_by FK
+    int address_id FK
+    datetime created_at
+    string login_user_id FK
+  }
+  memberDisasterStatuses["member_disaster_statuses (RESQ MAPPING)"] {
+    int member_status_id PK
+    string disaster_id FK
+    string household_id FK
+    string member_id FK
+    int status_id FK
+    int previous_status_id FK
+    string report_source
+    string priority_level
+    text notes
+    boolean is_verified
+  }
+  memberStatuses["member_statuses (RESQ MAPPING)"] {
+    int status_id PK
+    string status_key UK
+    string status_label
+    boolean is_active
+    datetime created_at
+  }
+  memberVulnerableGroups["member_vulnerable_groups (SHARED DEPENDENCY)"] {
+    int id PK
+    string member_id FK
+    int vulnerable_group_id FK
+  }
+  occupations["occupations (SHARED DEPENDENCY)"] {
+    int occuaption_id PK
+  }
+  puroks["puroks (SHARED DEPENDENCY)"] {
+    int purok_id PK
+    int sitio_id FK
+  }
+  relationships["relationships (SHARED DEPENDENCY)"] {
+    int relationship_id PK
+    string relationship_key UK
+    boolean is_active
+    datetime created_at
+  }
+  rescueCriteriaContactBaselines["rescue_criteria_contact_baselines (RESQ MAPPING)"] {
+    string event_id PK,FK
+    string household_id PK,FK
+  }
+  rescueCriteriaLineSnapshots["rescue_criteria_line_snapshots (RESQ MAPPING)"] {
+    int id PK
+    string event_id FK
+    datetime observed_at
+    datetime created_at
+    int rescue_priority_version FK
+  }
+  rescueCriteriaSnapshots["rescue_criteria_snapshots (RESQ MAPPING)"] {
+    int id PK
+    string event_id FK
+    datetime observed_at
+    int rescue_priority_version FK
+    int definition_version
+  }
+  rescuePrioritySettings["rescue_priority_settings (RESQ MAPPING)"] {
+    int version PK
+    string updated_by_user_id FK
+    datetime created_at
+  }
+  severityLevels["severity_levels (SHARED DEPENDENCY)"] {
+    int severity_id PK
+    string severity_key UK
+  }
+  sitios["sitios (SHARED DEPENDENCY)"] {
+    int sitio_id PK
+    int barangay_id FK
+  }
+  users["users (SHARED DEPENDENCY)"] {
+    string user_id PK
+    string first_name
+    string last_name
+    string name
+    int role_id FK
+    string assigned_center_id FK
+    string household_id FK
+    string member_id FK,UK
+    boolean is_active
+  }
+  vulnerableGroups["vulnerable_groups (SHARED DEPENDENCY)"] {
+    int vulnerable_group_id PK
+    string vulnerable_group_key UK
+  }
+  zipcodes["zipcodes (SHARED DEPENDENCY)"] {
+    int zipcode_id PK
+    int city_id FK
+  }
+  barangays |o..o{ addresses : "barangay_id"
+  puroks |o..o{ addresses : "purok_id"
+  sitios |o..o{ addresses : "sitio_id"
+  zipcodes |o..o{ addresses : "zipcode_id"
+  severityLevels |o..o{ disasterEvents : "severity_level_id"
+  disasterTypes ||..o{ disasterEvents : "type_id"
+  disasterEvents |o..o{ householdDisasters : "disaster_id"
+  households |o..o{ householdDisasters : "household_id"
+  householdStatuses |o..o{ householdDisasters : "initial_status_id"
+  householdStatuses |o..o{ householdDisasters : "current_status_id"
+  civilStatuses |o..o{ householdMembers : "civil_status_id"
+  educationLevels |o..o{ householdMembers : "education_level_id"
+  genders |o..o{ householdMembers : "gender_id"
+  households |o..o{ householdMembers : "household_id"
+  occupations |o..o{ householdMembers : "occupation"
+  relationships |o..o{ householdMembers : "relationship_id"
+  addresses |o..o{ households : "address_id"
+  users |o..o{ households : "created_by"
+  users |o..o{ households : "login_user_id"
+  disasterEvents ||..o{ memberDisasterStatuses : "disaster_id"
+  households ||..o{ memberDisasterStatuses : "household_id"
+  householdMembers ||..o{ memberDisasterStatuses : "member_id"
+  memberStatuses |o..o{ memberDisasterStatuses : "previous_status_id"
+  memberStatuses ||..o{ memberDisasterStatuses : "status_id"
+  vulnerableGroups ||..o{ memberVulnerableGroups : "vulnerable_group_id"
+  householdMembers |o..o{ memberVulnerableGroups : "member_id"
+  sitios ||..o{ puroks : "sitio_id"
+  disasterEvents ||--o{ rescueCriteriaContactBaselines : "event_id"
+  households ||--o{ rescueCriteriaContactBaselines : "household_id"
+  rescuePrioritySettings |o..o{ rescueCriteriaLineSnapshots : "rescue_priority_version"
+  disasterEvents ||..o{ rescueCriteriaLineSnapshots : "event_id"
+  rescuePrioritySettings |o..o{ rescueCriteriaSnapshots : "rescue_priority_version"
+  disasterEvents ||..o{ rescueCriteriaSnapshots : "event_id"
+  users |o..o{ rescuePrioritySettings : "updated_by_user_id"
+  barangays ||..o{ sitios : "barangay_id"
+  households |o..o{ users : "household_id"
+  householdMembers |o..o| users : "member_id"

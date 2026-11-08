@@ -1,0 +1,32 @@
+flowchart LR
+  subgraph lane0["Household resident"]
+    direction TB
+    start(["Choose current household, member or trusted report"])
+    send[/"Submit safety status and allowed details"/]
+  end
+  subgraph lane1["Mobile client"]
+    direction TB
+    choose["Display persisted event/status choices"]
+  end
+  subgraph lane2["API"]
+    direction TB
+    scope{"Identity, event and trusted permissions valid?"}
+  end
+  subgraph lane3["Client"]
+    direction TB
+    reject(["Show validation or access error"])
+  end
+  subgraph lane4["Operational data"]
+    direction TB
+    save[("Persist status evidence and current event state")]
+  end
+  subgraph lane5["HQ / Mobile clients"]
+    direction TB
+    show(["Refresh monitoring and status history"])
+  end
+  start --> choose
+  choose --> send
+  send --> scope
+  scope -->|"No"| reject
+  scope -->|"Yes"| save
+  save --> show

@@ -1,0 +1,307 @@
+# Household and member safety
+
+Source: shared_db, 2026-10-31T13:37:40+08:00. 32 objects; 63 enforced relationships; 165 displayed columns.
+
+Current household state, per-member event state, status logs and shared identity/geography.
+
+Presentation view: keys and selected business fields only. Context tables can have additional relationships outside this module; use the unified ERD for those.
+
+```mermaid
+erDiagram
+  direction LR
+  %% Physical FKs only; views and independent stores receive no invented links.
+  addresses["addresses (SHARED DEPENDENCY)"] {
+    int address_id PK
+    int barangay_id FK
+    int sitio_id FK
+    int purok_id FK
+    int zipcode_id FK
+    datetime created_at
+  }
+  affectedAreas["affected_areas (RESQ MAPPING)"] {
+    int affected_area_id PK
+    string disaster_id FK
+    int severity_id FK
+    int purok_id FK
+    int sitio_id FK
+    int barangay_id FK
+  }
+  barangays["barangays (SHARED DEPENDENCY)"] {
+    int barangay_id PK
+    string barangay_code UK
+    int city_id FK
+  }
+  civilStatuses["civil_statuses (SHARED DEPENDENCY)"] {
+    int status_id PK
+    string status_key UK
+    string status_label
+  }
+  deviceTokens["device_tokens (SHARED DEPENDENCY)"] {
+    int id PK
+    string household_id FK
+    string member_id FK
+    boolean is_active
+    datetime logged_at
+    datetime created_at
+    string user_id FK
+    int team_id FK
+    int selection_token_id FK
+    int responder_id FK
+  }
+  disasterEvents["disaster_events (SHARED DEPENDENCY)"] {
+    string event_id PK
+    string name
+    int type_id FK
+    int severity_level_id FK
+    datetime created_at
+  }
+  educationLevels["education_levels (SHARED DEPENDENCY)"] {
+    int education_level_id PK
+    string education_level_key UK
+  }
+  genders["genders (SHARED DEPENDENCY)"] {
+    int gender_id PK
+    string gender_key UK
+  }
+  geotaggedLocations["geotagged_locations (SHARED DEPENDENCY)"] {
+    int location_id PK
+    string household_id FK
+    boolean is_verified
+    string verified_by_user_id FK
+    datetime created_at
+  }
+  householdDisasters["household_disasters (RESQ MAPPING)"] {
+    int household_disaster_id PK
+    string household_id FK
+    string disaster_id FK
+    int initial_status_id FK
+    int current_status_id FK
+    string priority_level
+    datetime created_at
+  }
+  householdGeographicClassifications["household_geographic_classifications (RESQ MAPPING)"] {
+    string household_id PK,FK
+    string status
+    int sitio_id FK
+    int purok_id FK
+    datetime created_at
+  }
+  householdMembers["household_members (SHARED DEPENDENCY)"] {
+    string member_id PK
+    string household_id FK
+    string first_name
+    string last_name
+    int gender_id FK
+    int relationship_id FK
+    int civil_status_id FK
+    int occupation FK
+    int education_level_id FK
+    datetime created_at
+    string name
+  }
+  householdMobileNotifications["household_mobile_notifications (RESQ MAPPING)"] {
+    int notification_id PK
+    string household_id FK
+    string title
+    text message
+    datetime created_at
+  }
+  householdStatusLogs["household_status_logs (RESQ MAPPING)"] {
+    int status_log_id PK
+    string disaster_id FK
+    string household_id FK
+    int status_id FK
+    string source
+    text notes
+    datetime created_at
+  }
+  householdStatuses["household_statuses (SHARED DEPENDENCY)"] {
+    int status_id PK
+    string status_key UK
+    string status_label
+    boolean is_active
+  }
+  householdTrustedPins["household_trusted_pins (RESQ MAPPING)"] {
+    string household_id PK,FK
+    datetime created_at
+  }
+  households["households (SHARED DEPENDENCY)"] {
+    string household_id PK
+    string household_code UK
+    string household_name
+    string created_by FK
+    int address_id FK
+    datetime created_at
+    string login_user_id FK
+  }
+  memberDisasterStatuses["member_disaster_statuses (RESQ MAPPING)"] {
+    int member_status_id PK
+    string disaster_id FK
+    string household_id FK
+    string member_id FK
+    int status_id FK
+    int previous_status_id FK
+    string report_source
+    string priority_level
+    text notes
+    boolean is_verified
+  }
+  memberStatusLogs["member_status_logs (RESQ MAPPING)"] {
+    int member_status_log_id PK
+    string disaster_id FK
+    string household_id FK
+    string member_id FK
+    int from_status_id FK
+    int to_status_id FK
+    string report_source
+    string reported_by_user_id FK
+    string reported_by_member_id FK
+    int responder_id FK
+    int device_token_id FK
+    text notes
+    datetime reported_at
+    datetime logged_at
+  }
+  memberStatuses["member_statuses (RESQ MAPPING)"] {
+    int status_id PK
+    string status_key UK
+    string status_label
+    boolean is_active
+    datetime created_at
+  }
+  memberVulnerableGroups["member_vulnerable_groups (SHARED DEPENDENCY)"] {
+    int id PK
+    string member_id FK
+    int vulnerable_group_id FK
+  }
+  occupations["occupations (SHARED DEPENDENCY)"] {
+    int occuaption_id PK
+  }
+  purokBoundaries["purok_boundaries (RESQ MAPPING)"] {
+    int purok_id PK,FK
+    text source
+    datetime created_at
+  }
+  puroks["puroks (SHARED DEPENDENCY)"] {
+    int purok_id PK
+    int sitio_id FK
+  }
+  relationships["relationships (SHARED DEPENDENCY)"] {
+    int relationship_id PK
+    string relationship_key UK
+    boolean is_active
+    datetime created_at
+  }
+  responders["responders (RESQ MAPPING)"] {
+    int responder_id PK
+    string user_id FK
+    string responder_code UK
+    int team_id FK
+    string title
+    datetime created_at
+  }
+  severityLevels["severity_levels (SHARED DEPENDENCY)"] {
+    int severity_id PK
+    string severity_key UK
+  }
+  sitios["sitios (SHARED DEPENDENCY)"] {
+    int sitio_id PK
+    int barangay_id FK
+  }
+  statusReminders["status_reminders (RESQ MAPPING)"] {
+    int reminder_id PK
+    string event_id FK
+    string household_id FK
+    string member_id FK
+    string status
+    datetime sent_at
+    datetime created_at
+  }
+  trustedHouseholds["trusted_households (RESQ MAPPING)"] {
+    string connection_id PK
+    string requesting_household_id FK
+    string trusted_household_id FK
+    string validation_status
+    datetime created_at
+  }
+  users["users (SHARED DEPENDENCY)"] {
+    string user_id PK
+    string first_name
+    string last_name
+    string name
+    int role_id FK
+    string assigned_center_id FK
+    string household_id FK
+    string member_id FK,UK
+    boolean is_active
+  }
+  vulnerableGroups["vulnerable_groups (SHARED DEPENDENCY)"] {
+    int vulnerable_group_id PK
+    string vulnerable_group_key UK
+  }
+  barangays |o..o{ addresses : "barangay_id"
+  puroks |o..o{ addresses : "purok_id"
+  sitios |o..o{ addresses : "sitio_id"
+  barangays |o..o{ affectedAreas : "barangay_id"
+  disasterEvents |o..o{ affectedAreas : "disaster_id"
+  puroks |o..o{ affectedAreas : "purok_id"
+  severityLevels |o..o{ affectedAreas : "severity_id"
+  sitios |o..o{ affectedAreas : "sitio_id"
+  households |o..o{ deviceTokens : "REDACTED"
+  householdMembers |o..o{ deviceTokens : "REDACTED"
+  responders |o..o{ deviceTokens : "REDACTED"
+  users |o..o{ deviceTokens : "REDACTED"
+  severityLevels |o..o{ disasterEvents : "severity_level_id"
+  households |o..o{ geotaggedLocations : "household_id"
+  users |o..o{ geotaggedLocations : "verified_by_user_id"
+  disasterEvents |o..o{ householdDisasters : "disaster_id"
+  households |o..o{ householdDisasters : "household_id"
+  householdStatuses |o..o{ householdDisasters : "initial_status_id"
+  householdStatuses |o..o{ householdDisasters : "current_status_id"
+  households ||--o| householdGeographicClassifications : "household_id"
+  puroks |o..o{ householdGeographicClassifications : "purok_id"
+  sitios |o..o{ householdGeographicClassifications : "sitio_id"
+  civilStatuses |o..o{ householdMembers : "civil_status_id"
+  educationLevels |o..o{ householdMembers : "education_level_id"
+  genders |o..o{ householdMembers : "gender_id"
+  households |o..o{ householdMembers : "household_id"
+  occupations |o..o{ householdMembers : "occupation"
+  relationships |o..o{ householdMembers : "relationship_id"
+  households ||..o{ householdMobileNotifications : "household_id"
+  disasterEvents |o..o{ householdStatusLogs : "disaster_id"
+  households ||..o{ householdStatusLogs : "household_id"
+  householdStatuses ||..o{ householdStatusLogs : "status_id"
+  households ||--o| householdTrustedPins : "household_id"
+  addresses |o..o{ households : "address_id"
+  users |o..o{ households : "created_by"
+  users |o..o{ households : "login_user_id"
+  disasterEvents ||..o{ memberDisasterStatuses : "disaster_id"
+  households ||..o{ memberDisasterStatuses : "household_id"
+  householdMembers ||..o{ memberDisasterStatuses : "member_id"
+  memberStatuses |o..o{ memberDisasterStatuses : "previous_status_id"
+  memberStatuses ||..o{ memberDisasterStatuses : "status_id"
+  responders |o..o{ memberStatusLogs : "responder_id"
+  householdMembers |o..o{ memberStatusLogs : "reported_by_member_id"
+  householdMembers ||..o{ memberStatusLogs : "member_id"
+  memberStatuses |o..o{ memberStatusLogs : "from_status_id"
+  users |o..o{ memberStatusLogs : "reported_by_user_id"
+  deviceTokens |o..o{ memberStatusLogs : "device_token_id"
+  memberStatuses ||..o{ memberStatusLogs : "to_status_id"
+  disasterEvents ||..o{ memberStatusLogs : "disaster_id"
+  households ||..o{ memberStatusLogs : "household_id"
+  vulnerableGroups ||..o{ memberVulnerableGroups : "vulnerable_group_id"
+  householdMembers |o..o{ memberVulnerableGroups : "member_id"
+  puroks ||--o| purokBoundaries : "purok_id"
+  sitios ||..o{ puroks : "sitio_id"
+  users |o..o{ responders : "user_id"
+  barangays ||..o{ sitios : "barangay_id"
+  disasterEvents ||..o{ statusReminders : "event_id"
+  households ||..o{ statusReminders : "household_id"
+  householdMembers ||..o{ statusReminders : "member_id"
+  households ||..o{ trustedHouseholds : "requesting_household_id"
+  households ||..o{ trustedHouseholds : "trusted_household_id"
+  households |o..o{ users : "household_id"
+  householdMembers |o..o| users : "member_id"
+```
+
+[Raw Mermaid](02_household_safety.mmd) | [Diagram index](../00_README.md)

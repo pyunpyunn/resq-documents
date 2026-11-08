@@ -1,0 +1,39 @@
+flowchart LR
+  subgraph lane0["Authorized HQ dispatcher"]
+    direction TB
+    start(["Review actual household needs and team availability"])
+    select[/"Select incident, targets and responders"/]
+  end
+  subgraph lane1["API"]
+    direction TB
+    gate{"Role, active event and assignment scope valid?"}
+  end
+  subgraph lane2["Web client"]
+    direction TB
+    error(["Show validation or availability conflict"])
+  end
+  subgraph lane3["Operational data"]
+    direction TB
+    save[("Save assignment and target queue")]
+    evidence[("Persist scoped progress and field evidence")]
+  end
+  subgraph lane4["Delivery services"]
+    direction TB
+    deliver["Publish updates and attempt eligible push"]
+  end
+  subgraph lane5["Assigned rescuer"]
+    direction TB
+    rescuer["Read own assignment and update allowed progress"]
+  end
+  subgraph lane6["Authorized HQ user"]
+    direction TB
+    review(["Review results; complete only with permitted action"])
+  end
+  start --> select
+  select --> gate
+  gate -->|"No"| error
+  gate -->|"Yes"| save
+  save --> deliver
+  deliver --> rescuer
+  rescuer --> evidence
+  evidence --> review

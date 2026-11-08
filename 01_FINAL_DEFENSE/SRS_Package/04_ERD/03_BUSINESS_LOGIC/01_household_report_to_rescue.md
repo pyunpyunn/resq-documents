@@ -1,0 +1,250 @@
+# Household report to rescue assignment
+
+Source: shared_db, 2026-10-31T13:37:40+08:00. 26 objects; 48 enforced relationships; 135 displayed columns.
+
+Explain safety evidence, current household/event state and dispatch targets. ERD lines are structural, not the chronological order of API calls.
+
+Presentation view: keys and selected business fields only. Context tables can have additional relationships outside this module; use the unified ERD for those.
+
+```mermaid
+erDiagram
+  direction LR
+  %% Physical FKs only; views and independent stores receive no invented links.
+  addresses["addresses (SHARED DEPENDENCY)"] {
+    int address_id PK
+    int barangay_id FK
+    int sitio_id FK
+    int purok_id FK
+    int zipcode_id FK
+    datetime created_at
+  }
+  affectedAreas["affected_areas (RESQ MAPPING)"] {
+    int affected_area_id PK
+    string disaster_id FK
+    int severity_id FK
+    int purok_id FK
+    int sitio_id FK
+    int barangay_id FK
+  }
+  barangays["barangays (SHARED DEPENDENCY)"] {
+    int barangay_id PK
+    string barangay_code UK
+    int city_id FK
+  }
+  civilStatuses["civil_statuses (SHARED DEPENDENCY)"] {
+    int status_id PK
+    string status_key UK
+    string status_label
+  }
+  disasterEvents["disaster_events (SHARED DEPENDENCY)"] {
+    string event_id PK
+    string name
+    int type_id FK
+    int severity_level_id FK
+    datetime created_at
+  }
+  disasterTypes["disaster_types (SHARED DEPENDENCY)"] {
+    int type_id PK
+    string type_code UK
+    boolean is_active
+    datetime created_at
+  }
+  dispatchStatuses["dispatch_statuses (RESQ MAPPING)"] {
+    string status_key PK
+    string label
+    boolean is_active
+    string status_code UK
+  }
+  educationLevels["education_levels (SHARED DEPENDENCY)"] {
+    int education_level_id PK
+    string education_level_key UK
+  }
+  genders["genders (SHARED DEPENDENCY)"] {
+    int gender_id PK
+    string gender_key UK
+  }
+  householdDisasters["household_disasters (RESQ MAPPING)"] {
+    int household_disaster_id PK
+    string household_id FK
+    string disaster_id FK
+    int initial_status_id FK
+    int current_status_id FK
+    string priority_level
+    datetime created_at
+  }
+  householdMembers["household_members (SHARED DEPENDENCY)"] {
+    string member_id PK
+    string household_id FK
+    string first_name
+    string last_name
+    int gender_id FK
+    int relationship_id FK
+    int civil_status_id FK
+    int occupation FK
+    int education_level_id FK
+    datetime created_at
+    string name
+  }
+  householdStatusLogs["household_status_logs (RESQ MAPPING)"] {
+    int status_log_id PK
+    string disaster_id FK
+    string household_id FK
+    int status_id FK
+    string source
+    text notes
+    datetime created_at
+  }
+  householdStatuses["household_statuses (SHARED DEPENDENCY)"] {
+    int status_id PK
+    string status_key UK
+    string status_label
+    boolean is_active
+  }
+  households["households (SHARED DEPENDENCY)"] {
+    string household_id PK
+    string household_code UK
+    string household_name
+    string created_by FK
+    int address_id FK
+    datetime created_at
+    string login_user_id FK
+  }
+  memberDisasterStatuses["member_disaster_statuses (RESQ MAPPING)"] {
+    int member_status_id PK
+    string disaster_id FK
+    string household_id FK
+    string member_id FK
+    int status_id FK
+    int previous_status_id FK
+    string report_source
+    string priority_level
+    text notes
+    boolean is_verified
+  }
+  memberStatuses["member_statuses (RESQ MAPPING)"] {
+    int status_id PK
+    string status_key UK
+    string status_label
+    boolean is_active
+    datetime created_at
+  }
+  occupations["occupations (SHARED DEPENDENCY)"] {
+    int occuaption_id PK
+  }
+  puroks["puroks (SHARED DEPENDENCY)"] {
+    int purok_id PK
+    int sitio_id FK
+  }
+  relationships["relationships (SHARED DEPENDENCY)"] {
+    int relationship_id PK
+    string relationship_key UK
+    boolean is_active
+    datetime created_at
+  }
+  rescueTeams["rescue_teams (RESQ MAPPING)"] {
+    int team_id PK
+    string team_code UK
+    string team_name
+    int assigned_purok_id FK
+    int leader_responder_id FK
+    datetime created_at
+  }
+  responderAssignments["responder_assignments (RESQ MAPPING)"] {
+    int assignment_id PK
+    string assignment_code UK
+    int responder_id FK
+    int team_id FK
+    string disaster_id FK
+    int affected_area_id FK
+    string household_id FK
+    string priority_level
+    string status FK
+    datetime assigned_at
+  }
+  responders["responders (RESQ MAPPING)"] {
+    int responder_id PK
+    string user_id FK
+    string responder_code UK
+    int team_id FK
+    string title
+    datetime created_at
+  }
+  severityLevels["severity_levels (SHARED DEPENDENCY)"] {
+    int severity_id PK
+    string severity_key UK
+  }
+  sitios["sitios (SHARED DEPENDENCY)"] {
+    int sitio_id PK
+    int barangay_id FK
+  }
+  statusReminders["status_reminders (RESQ MAPPING)"] {
+    int reminder_id PK
+    string event_id FK
+    string household_id FK
+    string member_id FK
+    string status
+    datetime sent_at
+    datetime created_at
+  }
+  users["users (SHARED DEPENDENCY)"] {
+    string user_id PK
+    string first_name
+    string last_name
+    string name
+    int role_id FK
+    string assigned_center_id FK
+    string household_id FK
+    string member_id FK,UK
+    boolean is_active
+  }
+  barangays |o..o{ addresses : "barangay_id"
+  puroks |o..o{ addresses : "purok_id"
+  sitios |o..o{ addresses : "sitio_id"
+  barangays |o..o{ affectedAreas : "barangay_id"
+  disasterEvents |o..o{ affectedAreas : "disaster_id"
+  puroks |o..o{ affectedAreas : "purok_id"
+  severityLevels |o..o{ affectedAreas : "severity_id"
+  sitios |o..o{ affectedAreas : "sitio_id"
+  severityLevels |o..o{ disasterEvents : "severity_level_id"
+  disasterTypes ||..o{ disasterEvents : "type_id"
+  disasterEvents |o..o{ householdDisasters : "disaster_id"
+  households |o..o{ householdDisasters : "household_id"
+  householdStatuses |o..o{ householdDisasters : "initial_status_id"
+  householdStatuses |o..o{ householdDisasters : "current_status_id"
+  civilStatuses |o..o{ householdMembers : "civil_status_id"
+  educationLevels |o..o{ householdMembers : "education_level_id"
+  genders |o..o{ householdMembers : "gender_id"
+  households |o..o{ householdMembers : "household_id"
+  occupations |o..o{ householdMembers : "occupation"
+  relationships |o..o{ householdMembers : "relationship_id"
+  disasterEvents |o..o{ householdStatusLogs : "disaster_id"
+  households ||..o{ householdStatusLogs : "household_id"
+  householdStatuses ||..o{ householdStatusLogs : "status_id"
+  addresses |o..o{ households : "address_id"
+  users |o..o{ households : "created_by"
+  users |o..o{ households : "login_user_id"
+  disasterEvents ||..o{ memberDisasterStatuses : "disaster_id"
+  households ||..o{ memberDisasterStatuses : "household_id"
+  householdMembers ||..o{ memberDisasterStatuses : "member_id"
+  memberStatuses |o..o{ memberDisasterStatuses : "previous_status_id"
+  memberStatuses ||..o{ memberDisasterStatuses : "status_id"
+  sitios ||..o{ puroks : "sitio_id"
+  puroks |o..o{ rescueTeams : "assigned_purok_id"
+  responders |o..o{ rescueTeams : "leader_responder_id"
+  disasterEvents |o..o{ responderAssignments : "disaster_id"
+  households |o..o{ responderAssignments : "household_id"
+  responders ||..o{ responderAssignments : "responder_id"
+  dispatchStatuses |o..o{ responderAssignments : "status"
+  rescueTeams |o..o{ responderAssignments : "team_id"
+  affectedAreas |o..o{ responderAssignments : "affected_area_id"
+  rescueTeams |o..o{ responders : "team_id"
+  users |o..o{ responders : "user_id"
+  barangays ||..o{ sitios : "barangay_id"
+  disasterEvents ||..o{ statusReminders : "event_id"
+  households ||..o{ statusReminders : "household_id"
+  householdMembers ||..o{ statusReminders : "member_id"
+  households |o..o{ users : "household_id"
+  householdMembers |o..o| users : "member_id"
+```
+
+[Raw Mermaid](01_household_report_to_rescue.mmd) | [Diagram index](../00_README.md)

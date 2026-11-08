@@ -1,0 +1,38 @@
+flowchart LR
+  subgraph lane0["Rescuer"]
+    direction TB
+    start(["Choose channel and request transmission"])
+    talk["Transmit and finish voice clip"]
+  end
+  subgraph lane1["API / Mobile client"]
+    direction TB
+    permit{"Connected, permitted and microphone available?"}
+  end
+  subgraph lane2["Mobile client"]
+    direction TB
+    fail(["Show busy, denied or unavailable state"])
+  end
+  subgraph lane3["API"]
+    direction TB
+    upload["Validate uploaded audio"]
+  end
+  subgraph lane4["Audio file storage"]
+    direction TB
+    file[("Store actual recording file")]
+  end
+  subgraph lane5["Operational data"]
+    direction TB
+    meta[("Save clip path, transmission metadata and timestamps")]
+  end
+  subgraph lane6["HQ / Rescuer"]
+    direction TB
+    review(["Review feed or play available recording"])
+  end
+  start --> permit
+  permit -->|"No"| fail
+  permit -->|"Yes"| talk
+  talk --> upload
+  upload -->|"Valid audio"| file
+  upload -->|"Invalid upload"| fail
+  file --> meta
+  meta --> review

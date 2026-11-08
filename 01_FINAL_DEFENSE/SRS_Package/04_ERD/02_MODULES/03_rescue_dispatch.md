@@ -1,0 +1,188 @@
+# Teams and rescue dispatch
+
+Source: shared_db, 2026-10-31T13:37:40+08:00. 19 objects; 35 enforced relationships; 100 displayed columns.
+
+Real team/responder/assignment keys and persisted dispatch statuses. Leadership/login cycles are genuine relationships.
+
+Presentation view: keys and selected business fields only. Context tables can have additional relationships outside this module; use the unified ERD for those.
+
+```mermaid
+erDiagram
+  direction LR
+  %% Physical FKs only; views and independent stores receive no invented links.
+  addresses["addresses (SHARED DEPENDENCY)"] {
+    int address_id PK
+    int barangay_id FK
+    int sitio_id FK
+    int purok_id FK
+    int zipcode_id FK
+    datetime created_at
+  }
+  affectedAreas["affected_areas (RESQ MAPPING)"] {
+    int affected_area_id PK
+    string disaster_id FK
+    int severity_id FK
+    int purok_id FK
+    int sitio_id FK
+    int barangay_id FK
+  }
+  deviceTokens["device_tokens (SHARED DEPENDENCY)"] {
+    int id PK
+    string household_id FK
+    string member_id FK
+    boolean is_active
+    datetime logged_at
+    datetime created_at
+    string user_id FK
+    int team_id FK
+    int selection_token_id FK
+    int responder_id FK
+  }
+  disasterEvents["disaster_events (SHARED DEPENDENCY)"] {
+    string event_id PK
+    string name
+    int type_id FK
+    int severity_level_id FK
+    datetime created_at
+  }
+  disasterTypes["disaster_types (SHARED DEPENDENCY)"] {
+    int type_id PK
+    string type_code UK
+    boolean is_active
+    datetime created_at
+  }
+  dispatchStatuses["dispatch_statuses (RESQ MAPPING)"] {
+    string status_key PK
+    string label
+    boolean is_active
+    string status_code UK
+  }
+  dispatchTrips["dispatch_trips (RESQ MAPPING)"] {
+    int id PK
+    int dispatch_id FK
+    int team_id FK
+    int device_id FK
+    string status
+    datetime created_at
+  }
+  households["households (SHARED DEPENDENCY)"] {
+    string household_id PK
+    string household_code UK
+    string household_name
+    string created_by FK
+    int address_id FK
+    datetime created_at
+    string login_user_id FK
+  }
+  puroks["puroks (SHARED DEPENDENCY)"] {
+    int purok_id PK
+    int sitio_id FK
+  }
+  rescueCriteriaContactBaselines["rescue_criteria_contact_baselines (RESQ MAPPING)"] {
+    string event_id PK,FK
+    string household_id PK,FK
+  }
+  rescueCriteriaLineSnapshots["rescue_criteria_line_snapshots (RESQ MAPPING)"] {
+    int id PK
+    string event_id FK
+    datetime observed_at
+    datetime created_at
+    int rescue_priority_version FK
+  }
+  rescueCriteriaSnapshots["rescue_criteria_snapshots (RESQ MAPPING)"] {
+    int id PK
+    string event_id FK
+    datetime observed_at
+    int rescue_priority_version FK
+    int definition_version
+  }
+  rescuePrioritySettings["rescue_priority_settings (RESQ MAPPING)"] {
+    int version PK
+    string updated_by_user_id FK
+    datetime created_at
+  }
+  rescueTeams["rescue_teams (RESQ MAPPING)"] {
+    int team_id PK
+    string team_code UK
+    string team_name
+    int assigned_purok_id FK
+    int leader_responder_id FK
+    datetime created_at
+  }
+  responderAssignments["responder_assignments (RESQ MAPPING)"] {
+    int assignment_id PK
+    string assignment_code UK
+    int responder_id FK
+    int team_id FK
+    string disaster_id FK
+    int affected_area_id FK
+    string household_id FK
+    string priority_level
+    string status FK
+    datetime assigned_at
+  }
+  responders["responders (RESQ MAPPING)"] {
+    int responder_id PK
+    string user_id FK
+    string responder_code UK
+    int team_id FK
+    string title
+    datetime created_at
+  }
+  severityLevels["severity_levels (SHARED DEPENDENCY)"] {
+    int severity_id PK
+    string severity_key UK
+  }
+  tripPoints["trip_points (RESQ MAPPING)"] {
+    int id PK
+    int trip_id FK
+  }
+  users["users (SHARED DEPENDENCY)"] {
+    string user_id PK
+    string first_name
+    string last_name
+    string name
+    int role_id FK
+    string assigned_center_id FK
+    string household_id FK
+    string member_id FK,UK
+    boolean is_active
+  }
+  puroks |o..o{ addresses : "purok_id"
+  disasterEvents |o..o{ affectedAreas : "disaster_id"
+  puroks |o..o{ affectedAreas : "purok_id"
+  severityLevels |o..o{ affectedAreas : "severity_id"
+  households |o..o{ deviceTokens : "REDACTED"
+  responders |o..o{ deviceTokens : "REDACTED"
+  rescueTeams |o..o{ deviceTokens : "REDACTED"
+  users |o..o{ deviceTokens : "REDACTED"
+  severityLevels |o..o{ disasterEvents : "severity_level_id"
+  disasterTypes ||..o{ disasterEvents : "type_id"
+  deviceTokens ||..o{ dispatchTrips : "device_id"
+  responderAssignments ||..o{ dispatchTrips : "dispatch_id"
+  rescueTeams ||..o{ dispatchTrips : "team_id"
+  addresses |o..o{ households : "address_id"
+  users |o..o{ households : "created_by"
+  users |o..o{ households : "login_user_id"
+  disasterEvents ||--o{ rescueCriteriaContactBaselines : "event_id"
+  households ||--o{ rescueCriteriaContactBaselines : "household_id"
+  rescuePrioritySettings |o..o{ rescueCriteriaLineSnapshots : "rescue_priority_version"
+  disasterEvents ||..o{ rescueCriteriaLineSnapshots : "event_id"
+  rescuePrioritySettings |o..o{ rescueCriteriaSnapshots : "rescue_priority_version"
+  disasterEvents ||..o{ rescueCriteriaSnapshots : "event_id"
+  users |o..o{ rescuePrioritySettings : "updated_by_user_id"
+  puroks |o..o{ rescueTeams : "assigned_purok_id"
+  responders |o..o{ rescueTeams : "leader_responder_id"
+  disasterEvents |o..o{ responderAssignments : "disaster_id"
+  households |o..o{ responderAssignments : "household_id"
+  responders ||..o{ responderAssignments : "responder_id"
+  dispatchStatuses |o..o{ responderAssignments : "status"
+  rescueTeams |o..o{ responderAssignments : "team_id"
+  affectedAreas |o..o{ responderAssignments : "affected_area_id"
+  rescueTeams |o..o{ responders : "team_id"
+  users |o..o{ responders : "user_id"
+  dispatchTrips ||..o{ tripPoints : "trip_id"
+  households |o..o{ users : "household_id"
+```
+
+[Raw Mermaid](03_rescue_dispatch.mmd) | [Diagram index](../00_README.md)

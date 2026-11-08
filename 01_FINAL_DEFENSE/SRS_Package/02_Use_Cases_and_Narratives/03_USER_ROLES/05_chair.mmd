@@ -1,0 +1,77 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actorbrowserPush["Actor: Browser Push service"]
+  actorchair["Actor: Chairperson"]
+  actorevaTrack["Actor: EvaTrack report service"]
+  actoroneSignal["Actor: OneSignal mobile push"]
+  actorsafeTrack["Actor: SafeTrack report service"]
+  actorsmsGateway["Actor: Configured SMS gateway"]
+  actortrackingAid["Actor: TrackingAid"]
+  actorweatherProvider["Actor: Weather / advisory provider"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC01(["UC-01: Sign in, resume access and sign out"])
+    caseUC02(["UC-02: Maintain own profile and password"])
+    caseUC03(["UC-03: Recover account access"])
+    caseUC13B(["UC-13B: Verify evacuation arrival"])
+    caseUC20B(["UC-20B: Monitor rescue communications"])
+    caseUC22A(["UC-22A: Monitor dashboard and operational summaries"])
+    caseUC22B(["UC-22B: Review maps, directory and weather"])
+    caseUC23A(["UC-23A: Declare a disaster and publish alert instructions"])
+    caseUC23B(["UC-23B: Review, update and close an active event"])
+    caseUC24(["UC-24: Review severity and hazard overlays"])
+    caseUC25A(["UC-25A: Review household safety reports"])
+    caseUC25B(["UC-25B: Confirm a household status report"])
+    caseUC26A(["UC-26A: Inspect rescue priorities and historical criteria"])
+    caseUC26B(["UC-26B: Dispatch a rescue team"])
+    caseUC26C(["UC-26C: Complete a dispatch through HQ approval"])
+    caseUC27(["UC-27: Monitor field reports and team progress"])
+    caseUC28(["UC-28: Prepare, save and export a situation report"])
+    caseUC29(["UC-29: Export findings for manual escalation"])
+    caseUC30(["UC-30: Browse, export and manage scoped archive evidence"])
+    caseUC32A(["UC-32A: Review and record resource requests"])
+    caseUC32B(["UC-32B: Validate, return or complete a resource request"])
+    caseUC33(["UC-33: Forward a validated request and monitor fulfillment"])
+    caseUC34B(["UC-34B: Decide report release and generate a signed file"])
+    caseUC35(["UC-35: Request and review a partner report"])
+    caseUC36(["UC-36: Export selected situation findings"])
+    caseUC39(["UC-39: Review notifications and enable browser push"])
+  end
+  actorchair --- caseUC01
+  actorchair --- caseUC02
+  actorchair --- caseUC03
+  actorsmsGateway --- caseUC03
+  actorchair --- caseUC13B
+  actorchair --- caseUC20B
+  actorchair --- caseUC22A
+  actorchair --- caseUC22B
+  actorweatherProvider --- caseUC22B
+  actorchair --- caseUC23A
+  actoroneSignal --- caseUC23A
+  actorsmsGateway --- caseUC23A
+  actorchair --- caseUC23B
+  actorchair --- caseUC24
+  actorweatherProvider --- caseUC24
+  actorchair --- caseUC25A
+  actorchair --- caseUC25B
+  actorchair --- caseUC26A
+  actorchair --- caseUC26B
+  actorchair --- caseUC26C
+  actorchair --- caseUC27
+  actorchair --- caseUC28
+  actorchair --- caseUC29
+  actorchair --- caseUC30
+  actorchair --- caseUC32A
+  actorchair --- caseUC32B
+  actorchair --- caseUC33
+  actortrackingAid --- caseUC33
+  actorchair --- caseUC34B
+  actorsafeTrack --- caseUC34B
+  actorevaTrack --- caseUC34B
+  actortrackingAid --- caseUC34B
+  actorchair --- caseUC35
+  actorsafeTrack --- caseUC35
+  actorevaTrack --- caseUC35
+  actortrackingAid --- caseUC35
+  actorchair --- caseUC36
+  actorchair --- caseUC39
+  actorbrowserPush --- caseUC39

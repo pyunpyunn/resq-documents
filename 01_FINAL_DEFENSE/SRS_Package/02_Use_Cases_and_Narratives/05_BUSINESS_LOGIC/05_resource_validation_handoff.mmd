@@ -1,0 +1,40 @@
+flowchart LR
+  subgraph lane0["Team leader / authorized requester"]
+    direction TB
+    start(["Submit need, quantity and persisted urgency choice"])
+  end
+  subgraph lane1["API"]
+    direction TB
+    gate{"Requester, fields and lookup data valid?"}
+    accept{"Partner accepted handoff?"}
+  end
+  subgraph lane2["Requester client"]
+    direction TB
+    error(["Show input/access/schema error"])
+  end
+  subgraph lane3["Operational data"]
+    direction TB
+    pending[("Save request needing validation")]
+    return(["Record returned/rejected decision and reason"])
+    retry(["Retain actual failure/retry state"])
+    track(["Save actual reference and monitor fulfillment evidence"])
+  end
+  subgraph lane4["Authorized HQ approver"]
+    direction TB
+    review["Review and choose supported decision"]
+    valid{"Ready to release?"}
+  end
+  subgraph lane5["TrackingAid integration"]
+    direction TB
+    forward["Attempt validated handoff"]
+  end
+  start --> gate
+  gate -->|"No"| error
+  gate -->|"Yes"| pending
+  pending --> review
+  review --> valid
+  valid -->|"No"| return
+  valid -->|"Yes"| forward
+  forward --> accept
+  accept -->|"No"| retry
+  accept -->|"Yes"| track

@@ -1,0 +1,51 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actorbrowserPush["Actor: Browser Push service"]
+  actorevaTrack["Actor: EvaTrack report service"]
+  actorpreparedness["Actor: Preparedness"]
+  actorsafeTrack["Actor: SafeTrack report service"]
+  actorsmsGateway["Actor: Configured SMS gateway"]
+  actortrackingAid["Actor: TrackingAid"]
+  actorweatherProvider["Actor: Weather / advisory provider"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC01(["UC-01: Sign in, resume access and sign out"])
+    caseUC02(["UC-02: Maintain own profile and password"])
+    caseUC03(["UC-03: Recover account access"])
+    caseUC13B(["UC-13B: Verify evacuation arrival"])
+    caseUC22A(["UC-22A: Monitor dashboard and operational summaries"])
+    caseUC22B(["UC-22B: Review maps, directory and weather"])
+    caseUC24(["UC-24: Review severity and hazard overlays"])
+    caseUC25A(["UC-25A: Review household safety reports"])
+    caseUC28(["UC-28: Prepare, save and export a situation report"])
+    caseUC29(["UC-29: Export findings for manual escalation"])
+    caseUC30(["UC-30: Browse, export and manage scoped archive evidence"])
+    caseUC34B(["UC-34B: Decide report release and generate a signed file"])
+    caseUC35(["UC-35: Request and review a partner report"])
+    caseUC36(["UC-36: Export selected situation findings"])
+    caseUC39(["UC-39: Review notifications and enable browser push"])
+  end
+  actorpreparedness --- caseUC01
+  actorpreparedness --- caseUC02
+  actorpreparedness --- caseUC03
+  actorsmsGateway --- caseUC03
+  actorpreparedness --- caseUC13B
+  actorpreparedness --- caseUC22A
+  actorpreparedness --- caseUC22B
+  actorweatherProvider --- caseUC22B
+  actorpreparedness --- caseUC24
+  actorweatherProvider --- caseUC24
+  actorpreparedness --- caseUC25A
+  actorpreparedness --- caseUC28
+  actorpreparedness --- caseUC29
+  actorpreparedness --- caseUC30
+  actorpreparedness --- caseUC34B
+  actorsafeTrack --- caseUC34B
+  actorevaTrack --- caseUC34B
+  actortrackingAid --- caseUC34B
+  actorpreparedness --- caseUC35
+  actorsafeTrack --- caseUC35
+  actorevaTrack --- caseUC35
+  actortrackingAid --- caseUC35
+  actorpreparedness --- caseUC36
+  actorpreparedness --- caseUC39
+  actorbrowserPush --- caseUC39

@@ -1,0 +1,58 @@
+flowchart LR
+  subgraph lane0["People and partner systems"]
+    direction TB
+    start(["Choose public, authenticated or partner entry"])
+  end
+  subgraph lane1["Entry point"]
+    direction TB
+    kind{"Entry type?"}
+  end
+  subgraph lane2["Public visitor"]
+    direction TB
+    public["Submit validated inquiry"]
+  end
+  subgraph lane3["Partner integration"]
+    direction TB
+    partner["Verify partner key or signed contract"]
+  end
+  subgraph lane4["Human user / API"]
+    direction TB
+    auth["Authenticate account and resolve role/owner/device scope"]
+  end
+  subgraph lane5["Client / API"]
+    direction TB
+    workspace["Choose permitted module or mobile task"]
+  end
+  subgraph lane6["API"]
+    direction TB
+    valid{"Permissions, references and request valid?"}
+  end
+  subgraph lane7["Client / Partner"]
+    direction TB
+    error(["Show actionable error; do not display fabricated data"])
+  end
+  subgraph lane8["API / Operational data"]
+    direction TB
+    work[("Read or persist scoped business records")]
+  end
+  subgraph lane9["Delivery / export services"]
+    direction TB
+    async["Attempt configured notifications, sync or export"]
+  end
+  subgraph lane10["Clients and HQ"]
+    direction TB
+    state(["Display actual result, delivery status and recorded evidence"])
+  end
+  start --> kind
+  kind -->|"Public inquiry"| public
+  kind -->|"External request"| partner
+  kind -->|"Account action"| auth
+  public --> valid
+  partner --> valid
+  auth --> workspace
+  workspace --> valid
+  valid -->|"No"| error
+  valid -->|"Yes"| work
+  work -->|"When needed"| async
+  work -->|"Read result"| state
+  async --> state

@@ -1,0 +1,205 @@
+erDiagram
+  direction LR
+  %% Physical FKs only; views and independent stores receive no invented links.
+  barangayBoundaries["barangay_boundaries (RESQ MAPPING)"] {
+    string psgc_code PK
+    int barangay_id FK
+    datetime created_at
+  }
+  barangays["barangays (SHARED DEPENDENCY)"] {
+    int barangay_id PK
+    string barangay_code UK
+    int city_id FK
+  }
+  cachedRoutes["cached_routes (RESQ MAPPING)"] {
+    int id PK
+    int team_id FK
+    string household_id FK
+    string evac_center_id FK
+    string target_key
+    string status
+    datetime created_at
+  }
+  deviceTokens["device_tokens (SHARED DEPENDENCY)"] {
+    int id PK
+    string household_id FK
+    string member_id FK
+    boolean is_active
+    datetime logged_at
+    datetime created_at
+    string user_id FK
+    int team_id FK
+    int selection_token_id FK
+    int responder_id FK
+  }
+  disasterEvents["disaster_events (SHARED DEPENDENCY)"] {
+    string event_id PK
+    string name
+    int type_id FK
+    int severity_level_id FK
+    datetime created_at
+  }
+  dispatchTrips["dispatch_trips (RESQ MAPPING)"] {
+    int id PK
+    int dispatch_id FK
+    int team_id FK
+    int device_id FK
+    string status
+    datetime created_at
+  }
+  evacuationCenters["evacuation_centers (SHARED DEPENDENCY)"] {
+    string evacuation_center_id PK
+    string current_event_id FK
+    string name
+    string status
+    datetime created_at
+    text notes
+  }
+  householdMembers["household_members (SHARED DEPENDENCY)"] {
+    string member_id PK
+    string household_id FK
+    string first_name
+    string last_name
+    int gender_id FK
+    int relationship_id FK
+    int civil_status_id FK
+    int occupation FK
+    int education_level_id FK
+    datetime created_at
+    string name
+  }
+  households["households (SHARED DEPENDENCY)"] {
+    string household_id PK
+    string household_code UK
+    string household_name
+    string created_by FK
+    int address_id FK
+    datetime created_at
+    string login_user_id FK
+  }
+  mapTileMetadata["map_tile_metadata (RESQ MAPPING)"] {
+    int tile_id PK
+  }
+  mappingHazardLayers["mapping_hazard_layers (RESQ MAPPING)"] {
+    int id PK
+    int barangay_id FK
+    string name
+    string source
+    datetime created_at
+  }
+  offlinePacks["offline_packs (RESQ MAPPING)"] {
+    string version PK
+    boolean is_active
+    datetime created_at
+  }
+  personalAccessTokens["personal_access_tokens (SHARED DEPENDENCY)"] {
+    int id PK
+    text name
+    string token UK
+    datetime created_at
+  }
+  puroks["puroks (SHARED DEPENDENCY)"] {
+    int purok_id PK
+    int sitio_id FK
+  }
+  rescueTeams["rescue_teams (RESQ MAPPING)"] {
+    int team_id PK
+    string team_code UK
+    string team_name
+    int assigned_purok_id FK
+    int leader_responder_id FK
+    datetime created_at
+  }
+  responderAssignments["responder_assignments (RESQ MAPPING)"] {
+    int assignment_id PK
+    string assignment_code UK
+    int responder_id FK
+    int team_id FK
+    string disaster_id FK
+    int affected_area_id FK
+    string household_id FK
+    string priority_level
+    string status FK
+    datetime assigned_at
+  }
+  responderLocationLogs["responder_location_logs (RESQ MAPPING)"] {
+    int log_id PK
+    int responder_id FK
+    datetime logged_at
+  }
+  responderRoutes["responder_routes (RESQ MAPPING)"] {
+    int route_id PK
+    int assignment_id FK
+    datetime created_at
+    int responder_id FK
+    string household_id FK
+  }
+  responders["responders (RESQ MAPPING)"] {
+    int responder_id PK
+    string user_id FK
+    string responder_code UK
+    int team_id FK
+    string title
+    datetime created_at
+  }
+  routeCoordinates["route_coordinates (RESQ MAPPING)"] {
+    int coordinate_id PK
+    int route_id FK
+  }
+  syncEvents["sync_events (RESQ MAPPING)"] {
+    int id PK
+    string client_event_id UK
+    int device_id FK
+    string status
+  }
+  tripPoints["trip_points (RESQ MAPPING)"] {
+    int id PK
+    int trip_id FK
+  }
+  users["users (SHARED DEPENDENCY)"] {
+    string user_id PK
+    string first_name
+    string last_name
+    string name
+    int role_id FK
+    string assigned_center_id FK
+    string household_id FK
+    string member_id FK,UK
+    boolean is_active
+  }
+  barangays |o..o{ barangayBoundaries : "barangay_id"
+  evacuationCenters |o..o{ cachedRoutes : "evac_center_id"
+  households |o..o{ cachedRoutes : "household_id"
+  rescueTeams ||..o{ cachedRoutes : "team_id"
+  households |o..o{ deviceTokens : "REDACTED"
+  householdMembers |o..o{ deviceTokens : "REDACTED"
+  responders |o..o{ deviceTokens : "REDACTED"
+  rescueTeams |o..o{ deviceTokens : "REDACTED"
+  users |o..o{ deviceTokens : "REDACTED"
+  personalAccessTokens |o..o{ deviceTokens : "REDACTED"
+  deviceTokens ||..o{ dispatchTrips : "device_id"
+  responderAssignments ||..o{ dispatchTrips : "dispatch_id"
+  rescueTeams ||..o{ dispatchTrips : "team_id"
+  disasterEvents |o..o{ evacuationCenters : "current_event_id"
+  households |o..o{ householdMembers : "household_id"
+  users |o..o{ households : "created_by"
+  users |o..o{ households : "login_user_id"
+  barangays ||..o{ mappingHazardLayers : "barangay_id"
+  puroks |o..o{ rescueTeams : "assigned_purok_id"
+  responders |o..o{ rescueTeams : "leader_responder_id"
+  disasterEvents |o..o{ responderAssignments : "disaster_id"
+  households |o..o{ responderAssignments : "household_id"
+  responders ||..o{ responderAssignments : "responder_id"
+  rescueTeams |o..o{ responderAssignments : "team_id"
+  responders ||..o{ responderLocationLogs : "responder_id"
+  responderAssignments ||..o{ responderRoutes : "assignment_id"
+  households |o..o{ responderRoutes : "household_id"
+  responders |o..o{ responderRoutes : "responder_id"
+  rescueTeams |o..o{ responders : "team_id"
+  users |o..o{ responders : "user_id"
+  responderRoutes ||..o{ routeCoordinates : "route_id"
+  deviceTokens ||..o{ syncEvents : "device_id"
+  dispatchTrips ||..o{ tripPoints : "trip_id"
+  evacuationCenters |o..o{ users : "assigned_center_id"
+  households |o..o{ users : "household_id"
+  householdMembers |o..o| users : "member_id"

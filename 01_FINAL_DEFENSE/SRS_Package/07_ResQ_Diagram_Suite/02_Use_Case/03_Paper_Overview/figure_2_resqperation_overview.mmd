@@ -1,0 +1,46 @@
+flowchart LR
+  subgraph RESQPERATION["RESQPERATION system boundary"]
+    direction LR
+
+    subgraph HumanActors["Human actors"]
+      direction TB
+      Household["Household resident"]
+      Rescuer["Rescuer team<br/>(leader / member)"]
+      HQ["HQ/Admin roles"]
+      Public["Public visitor"]
+    end
+
+    subgraph PrincipalUseCases["Principal use cases"]
+      direction TB
+      UC1(["Set up households and report safety"])
+      UC2(["Review disaster alerts and evacuation routes"])
+      UC3(["Coordinate rescue dispatch and field response"])
+      UC4(["Monitor events, maps and household status"])
+      UC5(["Manage resource requests, reports and archives"])
+      UC6(["Submit and review public inquiries"])
+    end
+  end
+
+  subgraph ExternalSystems["External systems"]
+    direction TB
+    Maps["Map / routing services<br/>(OpenStreetMap, OSRM)"]
+    Weather["Weather / advisory sources<br/>(PAGASA, Open-Meteo)"]
+    Notifications["Push / SMS services<br/>(OneSignal, browser push, SMS gateway)"]
+    Partners["Reporting / request partners<br/>(SafeTrack, EvaTrack, TrackingAid)"]
+  end
+
+  Household --- UC1
+  Household --- UC2
+  Rescuer --- UC3
+  Rescuer --- UC5
+  HQ --- UC3
+  HQ --- UC4
+  HQ --- UC5
+  HQ --- UC6
+  Public --- UC6
+  Maps --- UC2
+  Maps --- UC3
+  Maps --- UC4
+  Weather --- UC4
+  Notifications --- UC2
+  Partners --- UC5

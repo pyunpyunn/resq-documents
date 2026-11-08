@@ -1,0 +1,180 @@
+{
+  "status": "passed",
+  "mermaid_version": "11.17.2",
+  "diagrams": 23,
+  "checks": [
+    "Mermaid syntax",
+    "default 50000-character limit",
+    "raw/Markdown equality",
+    "real table and field names",
+    "all full-ERD columns",
+    "PK/FK/UK markers",
+    "complete selected physical FK coverage",
+    "FK nullability/cardinality/identifying status",
+    "actual view dependencies",
+    "README file links"
+  ],
+  "results": [
+    {
+      "file": "01_UNIFIED/01_full_physical_erd.mmd",
+      "status": "passed",
+      "objects": 106,
+      "relationships": 174,
+      "source_characters": 45549
+    },
+    {
+      "file": "01_UNIFIED/02_unified_key_relationships.mmd",
+      "status": "passed",
+      "objects": 106,
+      "relationships": 174,
+      "source_characters": 25026
+    },
+    {
+      "file": "02_MODULES/01_identity_and_access.mmd",
+      "status": "passed",
+      "objects": 19,
+      "relationships": 25,
+      "source_characters": 4818
+    },
+    {
+      "file": "02_MODULES/02_household_safety.mmd",
+      "status": "passed",
+      "objects": 32,
+      "relationships": 63,
+      "source_characters": 9846
+    },
+    {
+      "file": "02_MODULES/03_rescue_dispatch.mmd",
+      "status": "passed",
+      "objects": 19,
+      "relationships": 35,
+      "source_characters": 5662
+    },
+    {
+      "file": "02_MODULES/04_field_assessment.mmd",
+      "status": "passed",
+      "objects": 17,
+      "relationships": 34,
+      "source_characters": 6012
+    },
+    {
+      "file": "02_MODULES/05_navigation_and_tracking.mmd",
+      "status": "passed",
+      "objects": 23,
+      "relationships": 36,
+      "source_characters": 6229
+    },
+    {
+      "file": "02_MODULES/06_communications.mmd",
+      "status": "passed",
+      "objects": 18,
+      "relationships": 33,
+      "source_characters": 5741
+    },
+    {
+      "file": "02_MODULES/07_requests_reports_archives.mmd",
+      "status": "passed",
+      "objects": 12,
+      "relationships": 19,
+      "source_characters": 3633
+    },
+    {
+      "file": "02_MODULES/08_public_inquiries.mmd",
+      "status": "passed",
+      "objects": 3,
+      "relationships": 2,
+      "source_characters": 812
+    },
+    {
+      "file": "02_MODULES/09_platform_support.mmd",
+      "status": "passed",
+      "objects": 19,
+      "relationships": 13,
+      "source_characters": 3447
+    },
+    {
+      "file": "02_MODULES/10_geography_and_master_data.mmd",
+      "status": "passed",
+      "objects": 21,
+      "relationships": 28,
+      "source_characters": 4701
+    },
+    {
+      "file": "02_MODULES/11_disasters_and_weather.mmd",
+      "status": "passed",
+      "objects": 12,
+      "relationships": 18,
+      "source_characters": 3136
+    },
+    {
+      "file": "02_MODULES/12_shared_evacuation_data.mmd",
+      "status": "passed",
+      "objects": 17,
+      "relationships": 25,
+      "source_characters": 4811
+    },
+    {
+      "file": "03_BUSINESS_LOGIC/01_household_report_to_rescue.mmd",
+      "status": "passed",
+      "objects": 26,
+      "relationships": 48,
+      "source_characters": 7627
+    },
+    {
+      "file": "03_BUSINESS_LOGIC/02_assessment_and_safety_evidence.mmd",
+      "status": "passed",
+      "objects": 21,
+      "relationships": 53,
+      "source_characters": 8279
+    },
+    {
+      "file": "03_BUSINESS_LOGIC/03_priority_dashboard_charts.mmd",
+      "status": "passed",
+      "objects": 26,
+      "relationships": 37,
+      "source_characters": 6723
+    },
+    {
+      "file": "03_BUSINESS_LOGIC/04_request_validation_handoff.mmd",
+      "status": "passed",
+      "objects": 12,
+      "relationships": 18,
+      "source_characters": 3536
+    },
+    {
+      "file": "03_BUSINESS_LOGIC/05_reporting_archives_recordings.mmd",
+      "status": "passed",
+      "objects": 18,
+      "relationships": 27,
+      "source_characters": 5072
+    },
+    {
+      "file": "03_BUSINESS_LOGIC/06_alert_delivery_devices.mmd",
+      "status": "passed",
+      "objects": 20,
+      "relationships": 33,
+      "source_characters": 5970
+    },
+    {
+      "file": "03_BUSINESS_LOGIC/07_household_login_recovery.mmd",
+      "status": "passed",
+      "objects": 17,
+      "relationships": 25,
+      "source_characters": 4630
+    },
+    {
+      "file": "04_REFERENCE/01_views_and_legacy_objects.mmd",
+      "status": "passed",
+      "objects": 4,
+      "relationships": 0,
+      "source_characters": 3203
+    },
+    {
+      "file": "04_REFERENCE/02_view_query_dependencies.mmd",
+      "status": "passed",
+      "objects": 12,
+      "relationships": 14,
+      "source_characters": 1621
+    }
+  ]
+}

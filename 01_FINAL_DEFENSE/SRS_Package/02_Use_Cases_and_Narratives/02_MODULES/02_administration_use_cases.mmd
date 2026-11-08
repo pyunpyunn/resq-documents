@@ -1,0 +1,16 @@
+flowchart LR
+  %% UML-style use-case view in Mermaid flowchart notation; neutral lines are associations.
+  actoroperationsadmin["Actor: Operations / Admin"]
+  actorpublic["Actor: Public visitor"]
+  subgraph systemBoundary["RESQPERATION system boundary"]
+    caseUC04(["UC-04: Manage rescuer accounts and teams"])
+    caseUC05(["UC-05: Manage HQ accounts and roles"])
+    caseUC06(["UC-06: Maintain barangay operational profile"])
+    caseUC07A(["UC-07A: Submit a public inquiry"])
+    caseUC07B(["UC-07B: Review and archive inquiries"])
+  end
+  actoroperationsadmin --- caseUC04
+  actoroperationsadmin --- caseUC05
+  actoroperationsadmin --- caseUC06
+  actorpublic --- caseUC07A
+  actoroperationsadmin --- caseUC07B

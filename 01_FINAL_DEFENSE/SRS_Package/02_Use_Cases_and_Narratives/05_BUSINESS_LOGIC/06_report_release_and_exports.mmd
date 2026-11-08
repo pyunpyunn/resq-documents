@@ -1,0 +1,44 @@
+flowchart LR
+  subgraph lane0["HQ reviewer / authorized partner"]
+    direction TB
+    start(["Select report or request permitted sections"])
+  end
+  subgraph lane1["API"]
+    direction TB
+    gate{"Access, contract and source data valid?"}
+    external{"External release request?"}
+  end
+  subgraph lane2["Client / Partner"]
+    direction TB
+    error(["Show validation or provider error"])
+    deliver(["Retrieve permitted file before link expiry"])
+  end
+  subgraph lane3["Operational data"]
+    direction TB
+    pending[("Record pending external report request")]
+    reject(["Record rejection reason"])
+  end
+  subgraph lane4["Authorized HQ reviewer"]
+    direction TB
+    review["Choose event, scope, inputs and release decision"]
+    accept{"External release accepted?"}
+  end
+  subgraph lane5["API / Operational data"]
+    direction TB
+    snapshot["Generate recorded summary or accepted snapshot"]
+  end
+  subgraph lane6["Report file storage"]
+    direction TB
+    file[("Create requested export and signed access when applicable")]
+  end
+  start --> gate
+  gate -->|"No"| error
+  gate -->|"Yes"| external
+  external -->|"Yes"| pending
+  external -->|"No: internal export"| snapshot
+  pending --> review
+  review --> accept
+  accept -->|"No"| reject
+  accept -->|"Yes"| snapshot
+  snapshot --> file
+  file --> deliver

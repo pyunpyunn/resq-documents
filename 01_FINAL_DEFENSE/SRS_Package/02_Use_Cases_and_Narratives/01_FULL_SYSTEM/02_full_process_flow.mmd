@@ -1,0 +1,25 @@
+flowchart TD
+  start(["Choose public, authenticated or partner entry"])
+  kind{"Entry type?"}
+  public["Submit validated inquiry"]
+  partner["Verify partner key or signed contract"]
+  auth["Authenticate account and resolve role/owner/device scope"]
+  workspace["Choose permitted module or mobile task"]
+  valid{"Permissions, references and request valid?"}
+  error(["Show actionable error; do not display fabricated data"])
+  work[("Read or persist scoped business records")]
+  async["Attempt configured notifications, sync or export"]
+  state(["Display actual result, delivery status and recorded evidence"])
+  start --> kind
+  kind -->|"Public inquiry"| public
+  kind -->|"External request"| partner
+  kind -->|"Account action"| auth
+  public --> valid
+  partner --> valid
+  auth --> workspace
+  workspace --> valid
+  valid -->|"No"| error
+  valid -->|"Yes"| work
+  work -->|"When needed"| async
+  work -->|"Read result"| state
+  async --> state
